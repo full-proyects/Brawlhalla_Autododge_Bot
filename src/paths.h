@@ -2,6 +2,7 @@
 
 #include <filesystem>
 #include <windows.h>
+#include <shellapi.h>
 
 inline std::filesystem::path ExecutableDirectory() {
     char buffer[MAX_PATH] = {};
