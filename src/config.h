@@ -438,7 +438,7 @@ public:
         frame_skip_enabled = profile.frame_skip_enabled;
         target_fps = profile.target_fps;
         min_dodge_distance = profile.min_dodge_distance;
-        max_dodge_distance = std::max(profile.min_dodge_distance, profile.max_dodge_distance);
+        max_dodge_distance = (std::max)(profile.min_dodge_distance, profile.max_dodge_distance);
         dry_run_enabled = profile.dry_run_enabled;
         calibration_mode = profile.calibration_mode;
         weapon_specific_distances = profile.weapon_specific_distances;
@@ -521,13 +521,13 @@ public:
             profile.dodge_key = root["dodge_key"].get<std::string>();
         }
         if (root.contains("polling_rate_ms") && root["polling_rate_ms"].is_number_integer()) {
-            profile.polling_rate_ms = std::max(1, std::min(1000, root["polling_rate_ms"].get<int>()));
+            profile.polling_rate_ms = (std::max)(1, (std::min)(1000, root["polling_rate_ms"].get<int>()));
         }
         if (root.contains("idle_polling_rate_ms") && root["idle_polling_rate_ms"].is_number_integer()) {
-            profile.idle_polling_rate_ms = std::max(10, std::min(500, root["idle_polling_rate_ms"].get<int>()));
+            profile.idle_polling_rate_ms = (std::max)(10, (std::min)(500, root["idle_polling_rate_ms"].get<int>()));
         }
         if (root.contains("active_polling_rate_ms") && root["active_polling_rate_ms"].is_number_integer()) {
-            profile.active_polling_rate_ms = std::max(1, std::min(100, root["active_polling_rate_ms"].get<int>()));
+            profile.active_polling_rate_ms = (std::max)(1, (std::min)(100, root["active_polling_rate_ms"].get<int>()));
         }
         if (root.contains("adaptive_polling") && root["adaptive_polling"].is_boolean()) {
             profile.adaptive_polling = root["adaptive_polling"].get<bool>();
@@ -536,13 +536,13 @@ public:
             profile.frame_skip_enabled = root["frame_skip_enabled"].get<bool>();
         }
         if (root.contains("target_fps") && root["target_fps"].is_number_integer()) {
-            profile.target_fps = std::max(30, std::min(120, root["target_fps"].get<int>()));
+            profile.target_fps = (std::max)(30, (std::min)(120, root["target_fps"].get<int>()));
         }
         if (root.contains("min_dodge_distance") && root["min_dodge_distance"].is_number()) {
-            profile.min_dodge_distance = std::max(0.0, root["min_dodge_distance"].get<double>());
+            profile.min_dodge_distance = (std::max)(0.0, root["min_dodge_distance"].get<double>());
         }
         if (root.contains("max_dodge_distance") && root["max_dodge_distance"].is_number()) {
-            profile.max_dodge_distance = std::max(profile.min_dodge_distance, root["max_dodge_distance"].get<double>());
+            profile.max_dodge_distance = (std::max)(profile.min_dodge_distance, root["max_dodge_distance"].get<double>());
         }
         if (root.contains("dry_run_enabled") && root["dry_run_enabled"].is_boolean()) {
             profile.dry_run_enabled = root["dry_run_enabled"].get<bool>();
@@ -599,13 +599,13 @@ public:
             profile.prediction_tuning_enabled = root["prediction_tuning_enabled"].get<bool>();
         }
         if (root.contains("prediction_aggression") && root["prediction_aggression"].is_number()) {
-            profile.prediction_aggression = std::max(0.0f, std::min(1.0f, static_cast<float>(root["prediction_aggression"].get<double>())));
+            profile.prediction_aggression = (std::max)(0.0f, (std::min)(1.0f, static_cast<float>(root["prediction_aggression"].get<double>())));
         }
         if (root.contains("dodge_padding_x") && root["dodge_padding_x"].is_number()) {
-            profile.dodge_padding_x = std::max(0.0, std::min(200.0, root["dodge_padding_x"].get<double>()));
+            profile.dodge_padding_x = (std::max)(0.0, (std::min)(200.0, root["dodge_padding_x"].get<double>()));
         }
         if (root.contains("dodge_padding_y") && root["dodge_padding_y"].is_number()) {
-            profile.dodge_padding_y = std::max(0.0, std::min(200.0, root["dodge_padding_y"].get<double>()));
+            profile.dodge_padding_y = (std::max)(0.0, (std::min)(200.0, root["dodge_padding_y"].get<double>()));
         }
         if (root.contains("react_chance") && root["react_chance"].is_number()) {
             profile.react_chance = SanitizeFloat(static_cast<float>(root["react_chance"].get<double>()), 1.0f, 0.0f, 1.0f);
@@ -620,7 +620,7 @@ public:
             profile.yumiko_use_signatures = root["yumiko_use_signatures"].get<bool>();
         }
         if (root.contains("yumiko_kill_damage") && root["yumiko_kill_damage"].is_number()) {
-            profile.yumiko_kill_damage = std::max(0, std::min(999, root["yumiko_kill_damage"].get<int>()));
+            profile.yumiko_kill_damage = (std::max)(0, (std::min)(999, root["yumiko_kill_damage"].get<int>()));
         }
         if (root.contains("ui_scale") && root["ui_scale"].is_number()) {
             profile.ui_scale = SanitizeFloat(static_cast<float>(root["ui_scale"].get<double>()), 1.0f, 0.75f, 1.5f);

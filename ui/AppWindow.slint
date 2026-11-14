@@ -1,5 +1,6 @@
 import { TabWidget, VerticalBox, HorizontalBox } from "std-widgets.slint";
 import { Dashboard } from "pages/Dashboard.slint";
+import { XpePage } from "pages/XpePage.slint";
 import { ControlsPage } from "pages/ControlsPage.slint";
 import { DefensePage } from "pages/DefensePage.slint";
 import { OffensePage } from "pages/OffensePage.slint";
@@ -9,7 +10,7 @@ import { ProfilesPage } from "pages/ProfilesPage.slint";
 import { DiagnosticsPage } from "pages/DiagnosticsPage.slint";
 
 export component MainWindow inherits Window {
-    title: "Brawlhalla Autododge";
+    title: "XPE Bot - Brawlhalla (Yumiko Edition)";
     preferred-width: 1100px;
     preferred-height: 720px;
     background: #0e0f11;
@@ -60,6 +61,9 @@ export component MainWindow inherits Window {
     in-out property <bool> prediction-tuning: true;
     in-out property <float> prediction-aggression: 0.5;
     in property <string> prediction-aggression-label: "50%";
+    in-out property <bool> yumiko-use-signatures: false;
+    in-out property <int> yumiko-kill-damage: 700;
+    in property <string> yumiko-kill-damage-label: "700 dmg";
     in-out property <float> ui-scale: 1.0;
     in property <string> ui-scale-label: "100%";
     in-out property <string> settings-search: "";
@@ -95,6 +99,8 @@ export component MainWindow inherits Window {
     callback combo-recognition-changed(bool);
     callback prediction-tuning-changed(bool);
     callback prediction-aggression-changed(float);
+    callback yumiko-use-signatures-changed(bool);
+    callback yumiko-kill-damage-changed(int);
     callback ui-scale-changed(float);
     callback save-profile(string);
     callback load-profile(string);
@@ -110,7 +116,7 @@ export component MainWindow inherits Window {
     VerticalBox {
         padding: 12px;
         HorizontalBox {
-            Text { text: "Brawlhalla Autododge"; font-size: 22px; font-weight: 700; color: #e6e8eb; }
+            Text { text: "XPE Bot"; font-size: 22px; font-weight: 700; color: #e6e8eb; }
             Rectangle { horizontal-stretch: 1; }
             Text {
                 text: root.safe-mode-active ? "SAFE MODE" : (root.active ? "BOT ENABLED" : "PAUSED");
@@ -122,6 +128,39 @@ export component MainWindow inherits Window {
         Text { text: root.status-text; color: #9098a3; font-size: 12px; }
 
         TabWidget {
+            Tab {
+                title: "XPE Bot";
+                XpePage {
+                    bot-running: root.active;
+                    dry-run: root.dry-run;
+                    safe-mode: root.safe-mode;
+                    offense-enabled: root.offense-enabled;
+                    yumiko-enabled: root.yumiko-enabled;
+                    yumiko-use-signatures: root.yumiko-use-signatures;
+                    yumiko-kill-damage: root.yumiko-kill-damage;
+                    yumiko-kill-damage-label: root.yumiko-kill-damage-label;
+                    combo-recognition: root.combo-recognition;
+                    prediction-aggression: root.prediction-aggression;
+                    prediction-aggression-label: root.prediction-aggression-label;
+                    min-dodge-distance: root.min-dodge-distance;
+                    min-dodge-distance-label: root.min-dodge-distance-label;
+                    auto-recover: root.auto-recover;
+                    react-chance: root.react-chance;
+                    react-chance-label: root.react-chance-label;
+                    request-toggle-bot => { root.toggle-active(); }
+                    request-toggle-dry-run => { root.toggle-dry-run(); }
+                    request-toggle-safe-mode => { root.toggle-safe-mode(); }
+                    offense-enabled-changed(value) => { root.offense-enabled = value; root.offense-enabled-changed(value); }
+                    yumiko-enabled-changed(value) => { root.yumiko-enabled = value; root.yumiko-enabled-changed(value); }
+                    yumiko-use-signatures-changed(value) => { root.yumiko-use-signatures = value; root.yumiko-use-signatures-changed(value); }
+                    yumiko-kill-damage-changed(value) => { root.yumiko-kill-damage = value; root.yumiko-kill-damage-changed(value); }
+                    combo-recognition-changed(value) => { root.combo-recognition = value; root.combo-recognition-changed(value); }
+                    prediction-aggression-changed(value) => { root.prediction-aggression = value; root.prediction-aggression-changed(value); }
+                    min-dodge-distance-changed(value) => { root.min-dodge-distance = value; root.min-dodge-distance-changed(value); }
+                    auto-recover-changed(value) => { root.auto-recover = value; root.auto-recover-changed(value); }
+                    react-chance-changed(value) => { root.react-chance = value; root.react-chance-changed(value); }
+                }
+            }
             Tab {
                 title: "Dashboard";
                 Dashboard {

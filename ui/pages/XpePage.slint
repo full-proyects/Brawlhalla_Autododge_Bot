@@ -1,0 +1,110 @@
+import { CheckBox, Slider, Button, VerticalBox, HorizontalBox } from "std-widgets.slint";
+
+// XPE Bot — Yumiko Edition. Panel dedicado del bot de Yumiko.
+// Copyright (c) 2026 xpe.nett. MIT License.
+
+export component XpePage inherits VerticalBox {
+    in property <bool> bot-running: false;
+    in property <bool> dry-run: false;
+    in property <bool> safe-mode: true;
+    in-out property <bool> offense-enabled: false;
+    in-out property <bool> yumiko-enabled: false;
+    in-out property <bool> yumiko-use-signatures: false;
+    in-out property <int> yumiko-kill-damage: 700;
+    in property <string> yumiko-kill-damage-label: "700 dmg";
+    in-out property <bool> combo-recognition: true;
+    in-out property <float> prediction-aggression: 0.5;
+    in property <string> prediction-aggression-label: "50%";
+    in-out property <float> min-dodge-distance: 50;
+    in property <string> min-dodge-distance-label: "50 px";
+    in-out property <bool> auto-recover: true;
+    in-out property <float> react-chance: 1.0;
+    in property <string> react-chance-label: "100%";
+
+    callback request-toggle-bot();
+    callback request-toggle-dry-run();
+    callback request-toggle-safe-mode();
+    callback offense-enabled-changed(bool);
+    callback yumiko-enabled-changed(bool);
+    callback yumiko-use-signatures-changed(bool);
+    callback yumiko-kill-damage-changed(int);
+    callback combo-recognition-changed(bool);
+    callback prediction-aggression-changed(float);
+    callback min-dodge-distance-changed(float);
+    callback auto-recover-changed(bool);
+    callback react-chance-changed(float);
+
+    Text { text: "XPE BOT - Yumiko Edition"; font-size: 22px; font-weight: 700; color: #7ee0a3; }
+    Text { text: "Bot dedicado para Yumiko: true combos de martillo y arco con auto-decisiones. Por xpe.nett."; color: #9098a3; wrap: word-wrap; }
+
+    Text { text: "Control del bot"; font-size: 16px; font-weight: 600; color: #e6e8eb; }
+    HorizontalBox {
+        Button {
+            text: root.bot-running ? "Detener bot" : "Activar bot";
+            clicked => { root.request-toggle-bot(); }
+        }
+        Button {
+            text: root.dry-run ? "Dry-run: ON" : "Dry-run: OFF";
+            clicked => { root.request-toggle-dry-run(); }
+        }
+        Button {
+            text: root.safe-mode ? "Safe Mode: ON" : "Safe Mode: OFF";
+            clicked => { root.request-toggle-safe-mode(); }
+        }
+    }
+    Text { text: "Safe Mode desactiva las acciones ofensivas si la deteccion falla. Dry-run simula sin enviar inputs."; color: #6c7480; font-size: 11px; wrap: word-wrap; }
+
+    Text { text: "XPE Yumiko Mode"; font-size: 16px; font-weight: 600; color: #e6e8eb; }
+    CheckBox {
+        text: "Activar bot de Yumiko (true combos martillo y arco + auto decisiones)";
+        checked: root.yumiko-enabled;
+        toggled => { root.yumiko-enabled = self.checked; root.yumiko-enabled-changed(self.checked); }
+    }
+    CheckBox {
+        text: "Rematar con firmas cuando el enemigo llega al danio de ejecucion";
+        checked: root.yumiko-use-signatures;
+        toggled => { root.yumiko-use-signatures = self.checked; root.yumiko-use-signatures-changed(self.checked); }
+    }
+    Text { text: "Danio de ejecucion para firmas: " + root.yumiko-kill-damage-label; }
+    Slider {
+        minimum: 0; maximum: 999; value: root.yumiko-kill-damage;
+        changed(value) => {
+            root.yumiko-kill-damage = Math.floor(value);
+            root.yumiko-kill-damage-changed(Math.floor(value));
+        }
+    }
+    CheckBox {
+        text: "Activar offense (atacar cuando existe ventana de hit simulada)";
+        checked: root.offense-enabled;
+        toggled => { root.offense-enabled = self.checked; root.offense-enabled-changed(self.checked); }
+    }
+    CheckBox {
+        text: "Reconocimiento de combos (seguir combo_next de la tabla)";
+        checked: root.combo-recognition;
+        toggled => { root.combo-recognition = self.checked; root.combo-recognition-changed(self.checked); }
+    }
+    Text { text: "Agresividad de prediccion: " + root.prediction-aggression-label; }
+    Slider {
+        minimum: 0; maximum: 100; value: root.prediction-aggression * 100;
+        changed(value) => { root.prediction-aggression = value / 100; root.prediction-aggression-changed(value / 100); }
+    }
+
+    Text { text: "Auto-dodge"; font-size: 16px; font-weight: 600; color: #e6e8eb; }
+    Text { text: "Distancia minima de dodge: " + root.min-dodge-distance-label; }
+    Slider {
+        minimum: 0; maximum: 500; value: root.min-dodge-distance;
+        changed(value) => { root.min-dodge-distance = value; root.min-dodge-distance-changed(value); }
+    }
+    CheckBox {
+        text: "Auto-recover (recuperarse automaticamente tras el dodge)";
+        checked: root.auto-recover;
+        toggled => { root.auto-recover = self.checked; root.auto-recover-changed(self.checked); }
+    }
+    Text { text: "Probabilidad de reaccion: " + root.react-chance-label; }
+    Slider {
+        minimum: 0; maximum: 100; value: root.react-chance * 100;
+        changed(value) => { root.react-chance = value / 100; root.react-chance-changed(value / 100); }
+    }
+
+    Text { text: "Los ajustes se guardan en config.json (perfil activo). Solo para pruebas en entornos controlados."; color: #6c7480; font-size: 11px; wrap: word-wrap; }
+}

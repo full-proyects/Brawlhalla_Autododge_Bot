@@ -202,8 +202,8 @@ private:
 
                 double corner1 = std::hypot(x1, y1);
                 double corner2 = std::hypot(x2, y2);
-                double range = std::max(corner1, corner2);
-                maxRange = std::max(maxRange, range);
+                double range = (std::max)(corner1, corner2);
+                maxRange = (std::max)(maxRange, range);
             }
         }
 
@@ -277,10 +277,10 @@ public:
             const AttackBox& box = it->second;
             if (box.x1 != box.x2 || box.y1 != box.y2) {
                 double maxExtent = 0.0;
-                maxExtent = std::max(maxExtent, std::hypot<double>(box.x1, box.y1));
-                maxExtent = std::max(maxExtent, std::hypot<double>(box.x2, box.y2));
-                maxExtent = std::max(maxExtent, std::hypot<double>(box.x1, box.y2));
-                maxExtent = std::max(maxExtent, std::hypot<double>(box.x2, box.y1));
+                maxExtent = (std::max)(maxExtent, std::hypot<double>(box.x1, box.y1));
+                maxExtent = (std::max)(maxExtent, std::hypot<double>(box.x2, box.y2));
+                maxExtent = (std::max)(maxExtent, std::hypot<double>(box.x1, box.y2));
+                maxExtent = (std::max)(maxExtent, std::hypot<double>(box.x2, box.y1));
                 return maxExtent + 60.0;
             }
         }
@@ -290,10 +290,10 @@ public:
         if (frameIt != frameHitboxes.end()) {
             double maxExtent = 0.0;
             for (const FrameBox& box : frameIt->second.boxes) {
-                maxExtent = std::max(maxExtent, std::hypot<double>(box.x1, box.y1));
-                maxExtent = std::max(maxExtent, std::hypot<double>(box.x2, box.y2));
-                maxExtent = std::max(maxExtent, std::hypot<double>(box.x1, box.y2));
-                maxExtent = std::max(maxExtent, std::hypot<double>(box.x2, box.y1));
+                maxExtent = (std::max)(maxExtent, std::hypot<double>(box.x1, box.y1));
+                maxExtent = (std::max)(maxExtent, std::hypot<double>(box.x2, box.y2));
+                maxExtent = (std::max)(maxExtent, std::hypot<double>(box.x1, box.y2));
+                maxExtent = (std::max)(maxExtent, std::hypot<double>(box.x2, box.y1));
             }
             if (maxExtent > 0) return maxExtent + 60.0;
         }

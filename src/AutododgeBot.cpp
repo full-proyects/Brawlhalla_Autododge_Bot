@@ -443,9 +443,9 @@ struct AutododgeBot::Impl {
             int activeTickMs = SanitizeInt(cfg.active_polling_rate_ms, 8, 1, 100);
             int idleTickMs = SanitizeInt(cfg.idle_polling_rate_ms, 40, 10, 500);
             if (cfg.frame_skip_enabled) {
-                const int frameLimitMs = std::max(1, static_cast<int>(1000.0 / std::max(1, cfg.target_fps)));
-                activeTickMs = std::max(activeTickMs, frameLimitMs);
-                idleTickMs = std::max(idleTickMs, frameLimitMs);
+                const int frameLimitMs = (std::max)(1, static_cast<int>(1000.0 / (std::max)(1, cfg.target_fps)));
+                activeTickMs = (std::max)(activeTickMs, frameLimitMs);
+                idleTickMs = (std::max)(idleTickMs, frameLimitMs);
             }
             int currentTickMs = (ui.validEntityCount.load() > 0) ? activeTickMs : idleTickMs;
             if (!cfg.adaptive_polling) currentTickMs = activeTickMs;
@@ -669,7 +669,7 @@ struct AutododgeBot::Impl {
             const float reactChance = SanitizeFloat(cfg.react_chance, 1.0f, 0.0f, 1.0f);
             const bool reactRoll = reactChance >= 1.0f || (static_cast<float>(rand()) / RAND_MAX) < reactChance;
             const int startup = gameData.getStartupFrames(enemy_powerID);
-            const int confidence = std::clamp(static_cast<int>(100.0 - std::min(dist, 400.0) / 4.0), 10, 99);
+            const int confidence = std::clamp(static_cast<int>(100.0 - (std::min)(dist, 400.0) / 4.0), 10, 99);
 
             if (dodgeArmed && cooldownReady && reactRoll && (withinDodgeWindow || earlyDodgeWindow)) {
                 const bool dryRun = ui.dryRun.load();
@@ -703,7 +703,7 @@ struct AutododgeBot::Impl {
                         std::chrono::steady_clock::now() - activeThreat.start_timestamp);
                     ui.totalReactionMs += reactionDuration.count();
                     ui.reactionSamples++;
-                    ui.averageReactionMs = static_cast<double>(ui.totalReactionMs) / std::max(1, ui.reactionSamples);
+                    ui.averageReactionMs = static_cast<double>(ui.totalReactionMs) / (std::max)(1, ui.reactionSamples);
                 }
                 PublishDecision({dryRun ? "WOULD DODGE" : "DODGE", moveName, "Incoming hitbox", startup, confidence});
                 if (ui.calibrationMode.load()) WriteCsvRow(dist, true, false);

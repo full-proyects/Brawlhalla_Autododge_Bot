@@ -31,7 +31,7 @@ inline int JitteredMs(int baseMs, int varianceMs) {
     static std::mt19937 rng{ std::random_device{}() };
     if (varianceMs <= 0) return baseMs;
     std::uniform_int_distribution<int> dist(-varianceMs, varianceMs);
-    return std::max(1, baseMs + dist(rng));
+    return (std::max)(1, baseMs + dist(rng));
 }
 
 // Deterministic follow-up selection built on the attack table's combo_next

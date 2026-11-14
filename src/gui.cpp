@@ -107,6 +107,13 @@ namespace {
         window->set_react_chance(config.react_chance);
         window->set_offense_enabled(config.offense_enabled);
         window->set_yumiko_enabled(config.yumiko_mode_enabled);
+        window->set_yumiko_use_signatures(config.yumiko_use_signatures);
+        window->set_yumiko_kill_damage(config.yumiko_kill_damage);
+        {
+            char kdmg[16];
+            snprintf(kdmg, sizeof(kdmg), "%d dmg", config.yumiko_kill_damage);
+            window->set_yumiko_kill_damage_label(slint::SharedString(kdmg));
+        }
         window->set_combo_recognition(config.combo_recognition_enabled);
         window->set_prediction_tuning(config.prediction_tuning_enabled);
         window->set_prediction_aggression(config.prediction_aggression);
@@ -194,6 +201,13 @@ int Gui::run(UiState& state) {
     window->on_yumiko_enabled_changed([&state](bool value) {
         Config::instance().yumiko_mode_enabled = value;
         state.yumikoEnabled = value;
+    });
+    window->on_yumiko_use_signatures_changed([](bool value) { Config::instance().yumiko_use_signatures = value; });
+    window->on_yumiko_kill_damage_changed([window](int value) {
+        Config::instance().yumiko_kill_damage = value;
+        char label[16];
+        snprintf(label, sizeof(label), "%d dmg", value);
+        window->set_yumiko_kill_damage_label(slint::SharedString(label));
     });
     window->on_combo_recognition_changed([](bool value) { Config::instance().combo_recognition_enabled = value; });
     window->on_prediction_tuning_changed([](bool value) { Config::instance().prediction_tuning_enabled = value; });
