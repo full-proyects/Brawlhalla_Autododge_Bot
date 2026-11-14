@@ -498,7 +498,7 @@ struct AutododgeBot::Impl {
             NotifySound("hook_reconnected");
         }
 
-        HWND hwndCandidate = FindWindowA(nullptr, "Brawlhalla");
+        HWND hwndCandidate = FindGameWindow("Brawlhalla");
         DWORD processId = 0;
         if (hwndCandidate) GetWindowThreadProcessId(hwndCandidate, &processId);
         ui.processFound = processId != 0;

@@ -20,6 +20,50 @@ static std::string to_utf8_string(const wchar_t* value) {
     return out;
 }
 
+// Brawlhalla uses the Apollo/AIR runtime. Its top-level window does not
+// resolve through FindWindowA(NULL, title) on every system, while the
+// class+title search does. Fall back to process-name enumeration so the
+// hook still attaches when the title changes or is localized.
+static HWND FindGameWindow(const char* windowName) {
+    HWND hwnd = FindWindowA("ApolloRuntimeContentWindow", windowName);
+    if (hwnd) return hwnd;
+    hwnd = FindWindowA(nullptr, windowName);
+    if (hwnd) return hwnd;
+
+    PROCESSENTRY32W pe{};
+    pe.dwSize = sizeof(pe);
+    HANDLE snap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+    if (snap == INVALID_HANDLE_VALUE) return nullptr;
+    DWORD pid = 0;
+    if (Process32FirstW(snap, &pe)) {
+        do {
+            const std::string exe = to_utf8_string(pe.szExeFile);
+            if (_stricmp(exe.c_str(), "Brawlhalla.exe") == 0) {
+                pid = pe.th32ProcessID;
+                break;
+            }
+        } while (Process32NextW(snap, &pe));
+    }
+    CloseHandle(snap);
+    if (!pid) return nullptr;
+
+    struct WindowByPid {
+        DWORD pid;
+        HWND hwnd;
+    } ctx{pid, nullptr};
+    EnumWindows(+[](HWND handle, LPARAM param) -> BOOL {
+        auto* c = reinterpret_cast<WindowByPid*>(param);
+        DWORD owner = 0;
+        GetWindowThreadProcessId(handle, &owner);
+        if (owner == c->pid && IsWindowVisible(handle)) {
+            c->hwnd = handle;
+            return FALSE;
+        }
+        return TRUE;
+    }, reinterpret_cast<LPARAM>(&ctx));
+    return ctx.hwnd;
+}
+
 class Memory {
 public:
     HANDLE hproccess = NULL;
@@ -39,7 +83,7 @@ public:
     }
 
     bool init(const string windowName, HWND& out) {
-        HWND hwnd = FindWindowA(NULL, windowName.c_str());
+        HWND hwnd = FindGameWindow(windowName.c_str());
         if (!hwnd) return false;
         out = hwnd;
 
