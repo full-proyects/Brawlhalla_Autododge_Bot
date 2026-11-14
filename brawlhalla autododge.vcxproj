@@ -114,7 +114,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SlintDir)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>slint_cpp.dll.lib;user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>slint_cpp.dll.lib;user32.lib;version.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>"$(SlintDir)\bin\slint-compiler.exe" -f cpp "$(ProjectDir)ui\AppWindow.slint" -o "$(ProjectDir)src\generated\app-window.h"</Command>
@@ -138,7 +138,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SlintDir)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>slint_cpp.dll.lib;user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>slint_cpp.dll.lib;user32.lib;version.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>"$(SlintDir)\bin\slint-compiler.exe" -f cpp "$(ProjectDir)ui\AppWindow.slint" -o "$(ProjectDir)src\generated\app-window.h"</Command>
