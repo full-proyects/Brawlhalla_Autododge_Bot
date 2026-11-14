@@ -151,6 +151,9 @@
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\gui.cpp" />
     <ClCompile Include="src\logger.cpp" />
+    <ClCompile Include="src\AutododgeBot.cpp" />
+    <ClCompile Include="src\GameVersionDetector.cpp" />
+    <ClCompile Include="src\HotkeyManager.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\memory.h" />
