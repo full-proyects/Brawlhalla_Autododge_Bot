@@ -106,6 +106,7 @@ namespace {
         window->set_dodge_padding_y(static_cast<float>(config.dodge_padding_y));
         window->set_react_chance(config.react_chance);
         window->set_offense_enabled(config.offense_enabled);
+        window->set_yumiko_enabled(config.yumiko_mode_enabled);
         window->set_combo_recognition(config.combo_recognition_enabled);
         window->set_prediction_tuning(config.prediction_tuning_enabled);
         window->set_prediction_aggression(config.prediction_aggression);
@@ -189,6 +190,10 @@ int Gui::run(UiState& state) {
     window->on_offense_enabled_changed([&state](bool value) {
         Config::instance().offense_enabled = value;
         state.offenseEnabled = value;
+    });
+    window->on_yumiko_enabled_changed([&state](bool value) {
+        Config::instance().yumiko_mode_enabled = value;
+        state.yumikoEnabled = value;
     });
     window->on_combo_recognition_changed([](bool value) { Config::instance().combo_recognition_enabled = value; });
     window->on_prediction_tuning_changed([](bool value) { Config::instance().prediction_tuning_enabled = value; });

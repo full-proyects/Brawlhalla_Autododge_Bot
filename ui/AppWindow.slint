@@ -55,6 +55,7 @@ export component MainWindow inherits Window {
     in property <string> dodge-padding-y-label: "30 px";
     in property <string> react-chance-label: "100%";
     in-out property <bool> offense-enabled: false;
+    in-out property <bool> yumiko-enabled: false;
     in-out property <bool> combo-recognition: true;
     in-out property <bool> prediction-tuning: true;
     in-out property <float> prediction-aggression: 0.5;
@@ -90,6 +91,7 @@ export component MainWindow inherits Window {
     callback dodge-padding-y-changed(float);
     callback react-chance-changed(float);
     callback offense-enabled-changed(bool);
+    callback yumiko-enabled-changed(bool);
     callback combo-recognition-changed(bool);
     callback prediction-tuning-changed(bool);
     callback prediction-aggression-changed(float);
@@ -175,11 +177,13 @@ export component MainWindow inherits Window {
                 title: "Offense";
                 OffensePage {
                     offense-enabled: root.offense-enabled;
+                    yumiko-enabled: root.yumiko-enabled;
                     combo-recognition: root.combo-recognition;
                     prediction-tuning: root.prediction-tuning;
                     prediction-aggression: root.prediction-aggression;
                     prediction-aggression-label: root.prediction-aggression-label;
                     offense-enabled-changed(value) => { root.offense-enabled = value; root.offense-enabled-changed(value); }
+                    yumiko-enabled-changed(value) => { root.yumiko-enabled = value; root.yumiko-enabled-changed(value); }
                     combo-recognition-changed(value) => { root.combo-recognition = value; root.combo-recognition-changed(value); }
                     prediction-tuning-changed(value) => { root.prediction-tuning = value; root.prediction-tuning-changed(value); }
                     prediction-aggression-changed(value) => { root.prediction-aggression = value; root.prediction-aggression-changed(value); }

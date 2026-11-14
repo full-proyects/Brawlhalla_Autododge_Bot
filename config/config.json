@@ -51,7 +51,10 @@
             "window_h": 720,
             "window_w": 1120,
             "window_x": 100,
-            "window_y": 100
+            "window_y": 100,
+            "yumiko_mode_enabled": false,
+            "yumiko_use_signatures": false,
+            "yumiko_kill_damage": 130
         }
     },
     "settings": {
@@ -104,6 +107,9 @@
         "window_h": 720,
         "window_w": 1120,
         "window_x": 100,
-        "window_y": 100
+        "window_y": 100,
+        "yumiko_mode_enabled": false,
+        "yumiko_use_signatures": false,
+        "yumiko_kill_damage": 130
     }
 }

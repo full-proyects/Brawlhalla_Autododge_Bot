@@ -1,4 +1,6 @@
-name: Build and Release
+name: XPE Bot Build and Release
+# XPE Bot (Yumiko Edition) — automatic build workflow.
+# Copyright (c) 2026 xpe.nett. MIT License.
 
 on:
   pull_request:
@@ -10,9 +12,13 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: xpe-bot-build-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
-    name: Windows x64 build
+    name: XPE Bot — Windows x64 build
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
@@ -53,12 +59,13 @@ jobs:
       - name: Upload runtime package
         uses: actions/upload-artifact@v4
         with:
-          name: BrawlhallaAutododge-windows-x64
+          name: XPEBot-windows-x64
           path: dist/*.zip
           if-no-files-found: error
+          retention-days: 14
 
   release:
-    name: Publish GitHub Release
+    name: Publish XPE Bot GitHub Release
     if: github.ref_type == 'tag'
     needs: build
     runs-on: ubuntu-latest
@@ -67,7 +74,7 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: BrawlhallaAutododge-windows-x64
+          name: XPEBot-windows-x64
           path: release-assets
 
       - name: Publish release assets

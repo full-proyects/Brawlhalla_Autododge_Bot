@@ -62,6 +62,9 @@ struct SavedProfile {
     double dodge_padding_y = 30.0;
     float react_chance = 1.0f;
     bool offense_enabled = false;
+    bool yumiko_mode_enabled = false;
+    bool yumiko_use_signatures = false;
+    int yumiko_kill_damage = 130;
     float ui_scale = 1.0f;
     bool analysis_mode = false;
     bool weapon_swap_detection = true;
@@ -242,6 +245,9 @@ public:
         current_profile_.dodge_padding_y = dodge_padding_y;
         current_profile_.react_chance = react_chance;
         current_profile_.offense_enabled = offense_enabled;
+        current_profile_.yumiko_mode_enabled = yumiko_mode_enabled;
+        current_profile_.yumiko_use_signatures = yumiko_use_signatures;
+        current_profile_.yumiko_kill_damage = yumiko_kill_damage;
         current_profile_.ui_scale = ui_scale;
         current_profile_.analysis_mode = analysis_mode;
         current_profile_.weapon_swap_detection = weapon_swap_detection;
@@ -401,6 +407,9 @@ public:
         dodge_padding_y = 30.0;
         react_chance = 1.0f;
         offense_enabled = false;
+        yumiko_mode_enabled = false;
+        yumiko_use_signatures = false;
+        yumiko_kill_damage = 130;
         ui_scale = 1.0f;
         analysis_mode = false;
         weapon_swap_detection = true;
@@ -453,6 +462,9 @@ public:
         dodge_padding_y = profile.dodge_padding_y;
         react_chance = profile.react_chance;
         offense_enabled = profile.offense_enabled;
+        yumiko_mode_enabled = profile.yumiko_mode_enabled;
+        yumiko_use_signatures = profile.yumiko_use_signatures;
+        yumiko_kill_damage = profile.yumiko_kill_damage;
         ui_scale = profile.ui_scale;
         analysis_mode = profile.analysis_mode;
         weapon_swap_detection = profile.weapon_swap_detection;
@@ -601,6 +613,15 @@ public:
         if (root.contains("offense_enabled") && root["offense_enabled"].is_boolean()) {
             profile.offense_enabled = root["offense_enabled"].get<bool>();
         }
+        if (root.contains("yumiko_mode_enabled") && root["yumiko_mode_enabled"].is_boolean()) {
+            profile.yumiko_mode_enabled = root["yumiko_mode_enabled"].get<bool>();
+        }
+        if (root.contains("yumiko_use_signatures") && root["yumiko_use_signatures"].is_boolean()) {
+            profile.yumiko_use_signatures = root["yumiko_use_signatures"].get<bool>();
+        }
+        if (root.contains("yumiko_kill_damage") && root["yumiko_kill_damage"].is_number()) {
+            profile.yumiko_kill_damage = std::max(0, std::min(999, root["yumiko_kill_damage"].get<int>()));
+        }
         if (root.contains("ui_scale") && root["ui_scale"].is_number()) {
             profile.ui_scale = SanitizeFloat(static_cast<float>(root["ui_scale"].get<double>()), 1.0f, 0.75f, 1.5f);
         }
@@ -689,6 +710,9 @@ public:
         root["dodge_padding_y"] = profile.dodge_padding_y;
         root["react_chance"] = profile.react_chance;
         root["offense_enabled"] = profile.offense_enabled;
+        root["yumiko_mode_enabled"] = profile.yumiko_mode_enabled;
+        root["yumiko_use_signatures"] = profile.yumiko_use_signatures;
+        root["yumiko_kill_damage"] = profile.yumiko_kill_damage;
         root["ui_scale"] = profile.ui_scale;
         root["analysis_mode"] = profile.analysis_mode;
         root["weapon_swap_detection"] = profile.weapon_swap_detection;
@@ -747,6 +771,9 @@ public:
     double dodge_padding_y = 30.0;
     float react_chance = 1.0f;
     bool offense_enabled = false;
+    bool yumiko_mode_enabled = false;
+    bool yumiko_use_signatures = false;
+    int yumiko_kill_damage = 130;
     float ui_scale = 1.0f;
     bool analysis_mode = false;
     bool weapon_swap_detection = true;

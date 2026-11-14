@@ -8,6 +8,7 @@
 #include "InputController.h"
 #include "LocalCalibrator.h"
 #include "OffenseController.h"
+#include "XpeYumikoBot.h"
 #include "OffsetValidator.h"
 #include "combo_engine.h"
 #include "config.h"
@@ -74,6 +75,7 @@ struct AutododgeBot::Impl {
     DecisionFeed decisions;
     LocalCalibrator calibrator;
     ComboEngine combo;
+    xpe::YumikoBot xpeYumiko;
     VelocityTracker youVel;
     VelocityTracker enyVel;
     std::ofstream calibrationLog;
@@ -712,11 +714,36 @@ struct AutododgeBot::Impl {
             }
         } else if (local_found && enemy_found && (ui.offenseEnabled.load() || cfg.offense_enabled) && !ui.dryRun.load()) {
             const int forced = cfg.combo_recognition_enabled ? combo.PendingMoveId(nowMs) : -1;
+            // XPE Bot (Yumiko): legend-specific true-combo chains take precedence.
+            const bool xpeYumikoActive = (cfg.yumiko_mode_enabled || ui.yumikoEnabled.load()) &&
+                localActor.has_legend && localActor.legend_id == xpe::kYumikoLegendId;
+            const bool towardRight = enemy_x >= local_x;
+            if (xpeYumikoActive) {
+                const int yForced = xpeYumiko.PickForced(localActor, enemyActor, nowMs);
+                if (yForced != -1) {
+                    const AttackChoice yChoice = OffenseController::PickAttack(localActor, enemyActor, youVel, enyVel, yForced);
+                    if (yChoice.move) {
+                        OffenseController::Execute(input, *yChoice.move, towardRight);
+                        xpeYumiko.OnExecuted(yChoice.id, nowMs);
+                        PublishDecision({"XPE COMBO", yChoice.move->name ? yChoice.move->name : "move",
+                                         xpeYumiko.ActiveChainName(), yChoice.hitFrame,
+                                         std::clamp(90 - yChoice.hitFrame * 3, 20, 95)});
+                    }
+                } else {
+                    const int sigId = xpeYumiko.PickSignature(localActor, enemyActor,
+                                                              cfg.yumiko_use_signatures, cfg.yumiko_kill_damage);
+                    if (sigId != -1) {
+                        xpe::ExecuteYumikoSignature(input, sigId, towardRight);
+                        xpeYumiko.Reset();
+                        PublishDecision({"XPE SIG", "Yumiko signature", "Kill-damage finisher", 0, 85});
+                    }
+                }
+            }
             const AttackChoice choice = OffenseController::PickAttack(localActor, enemyActor, youVel, enyVel, forced);
             if (choice.move) {
-                const bool towardRight = enemy_x >= local_x;
                 OffenseController::Execute(input, *choice.move, towardRight);
-                if (choice.move->combo_next != -1) combo.OnHitConfirmed(choice.id, nowMs);
+                if (!xpeYumikoActive && choice.move->combo_next != -1) combo.OnHitConfirmed(choice.id, nowMs);
+                if (xpeYumikoActive) xpeYumiko.OnExecuted(choice.id, nowMs);
                 PublishDecision({"ATTACK", choice.move->name ? choice.move->name : "move",
                                  "Opponent in simulated hit window", choice.hitFrame,
                                  std::clamp(90 - choice.hitFrame * 3, 20, 95)});

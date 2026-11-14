@@ -1,6 +1,28 @@
-# Brawlhalla Autododge
+# XPE Bot — Brawlhalla Yumiko Edition
+
+> **XPE Bot** por **xpe.nett** — capa de ofensiva específica para Yumiko (legend 36, `Ninetails`) con true combos de **martillo** y **arco**, auto-decisiones y remates por firma.
+>
+> © 2026 xpe.nett. Código base: Brawlhalla Autododge (MIT). Consulta `src/XpeYumikoBot.h` para el motor de combos.
 
 Windows C++ research prototype with a Slint desktop UI, process observation, fighter telemetry, and configurable defensive decision logic.
+
+## XPE Bot: modo Yumiko
+
+El módulo `src/XpeYumikoBot.h` añade:
+
+- **Librería de true combos** para martillo y arco con ventanas por daño (`dLight > dLight`, `dLight > sair`, `sair > sair`, `dLight > dair`, etc.). Cada paso se re-valida contra la simulación de hitboxes por frame antes de enviar una sola tecla: si la cadena no cuadra, el bot decae al selector genérico en vez de meter inputs a ciegas.
+- **Auto-decisiones**: arranque de cadena según estado (enemigo en el suelo → `dLight`; enemigo en el aire → `sair`), con límites de daño por paso para no romper la trueness de la cadena.
+- **Remates por firma (opcional, OFF por defecto)**: cuando el daño del rival supera `yumiko_kill_damage`, puede cerrar con las sigs de Yumiko (IDs 1283/1286/1289 arco, 1296/1303/1321 martillo). Usa gates de rango aproximados porque el game-data de sigs no trae hitboxes por frame — coherente con la filosofía fail-closed del proyecto.
+
+Configuración en `config/config.json` (perfil activo):
+
+```json
+"yumiko_mode_enabled": false,
+"yumiko_use_signatures": false,
+"yumiko_kill_damage": 130
+```
+
+o desde la UI, pestaña **Offense**: casilla *XPE Yumiko mode*.
 
 ## Project layout
 
@@ -39,7 +61,7 @@ The resulting `dist\BrawlhallaAutododge-dev.zip` contains the executable, Slint 
 
 ## Automated builds and releases
 
-GitHub Actions validates every JSON game-data file and builds the x64 Release application on pull requests and pushes to `main`. Every successful run uploads a downloadable runtime-package artifact.
+GitHub Actions validates every JSON game-data file and builds the x64 Release application on pull requests and pushes to `main`. Every successful run uploads a downloadable runtime-package artifact (`XPEBot-windows-x64`).
 
 To publish a GitHub Release, create and push a version tag:
 
@@ -50,6 +72,10 @@ git push origin v1.0.0
 
 The tagged workflow builds the application, packages the runtime zip, and creates a GitHub Release with generated release notes and the zip attached. No local packaging or manual release upload is needed.
 
+## Panel de control (repo aparte)
+
+El panel web local **xpe-bot-panel** vive en su propio repositorio: sirve una SPA en `127.0.0.1` para ver estado, editar el `config.json` en caliente y ver logs del bot. Sin dependencias externas, solo Python stdlib.
+
 ## Safety and data confidence
 
 This software interacts with a running game process and sends keyboard input. It is patch-sensitive and may conflict with game rules or anti-cheat systems. Use it only where you have permission and accept the associated risk.
@@ -58,4 +84,4 @@ Do not treat candidate or unconfirmed offsets as verified facts. See [docs/OFFSE
 
 ## License
 
-MIT. See [LICENSE.txt](LICENSE.txt).
+MIT. See [LICENSE.txt](LICENSE.txt). Módulo XPE Yumiko © 2026 xpe.nett.
