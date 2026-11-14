@@ -1,4 +1,4 @@
-import { CheckBox, Slider, Button, VerticalBox, HorizontalBox } from "std-widgets.slint";
+import { CheckBox, Slider, Button, VerticalBox, HorizontalBox, ComboBox } from "std-widgets.slint";
 
 // XPE Bot — Yumiko Edition. Panel dedicado del bot de Yumiko.
 // Copyright (c) 2026 xpe.nett. MIT License.
@@ -20,6 +20,8 @@ export component XpePage inherits VerticalBox {
     in-out property <bool> auto-recover: true;
     in-out property <float> react-chance: 1.0;
     in property <string> react-chance-label: "100%";
+    in-out property <string> xpe-playstyle: "balanced";
+    in-out property <string> xpe-team-mode: "auto";
 
     callback request-toggle-bot();
     callback request-toggle-dry-run();
@@ -33,6 +35,8 @@ export component XpePage inherits VerticalBox {
     callback min-dodge-distance-changed(float);
     callback auto-recover-changed(bool);
     callback react-chance-changed(float);
+    callback xpe-playstyle-changed(string);
+    callback xpe-team-mode-changed(string);
 
     Text { text: "XPE BOT - Yumiko Edition"; font-size: 22px; font-weight: 700; color: #7ee0a3; }
     Text { text: "Bot dedicado para Yumiko: true combos de martillo y arco con auto-decisiones. Por xpe.nett."; color: #9098a3; wrap: word-wrap; }
@@ -106,5 +110,23 @@ export component XpePage inherits VerticalBox {
         changed(value) => { root.react-chance = value / 100; root.react-chance-changed(value / 100); }
     }
 
+    Text { text: "Decisiones automaticas"; font-size: 16px; font-weight: 600; color: #e6e8eb; }
+    HorizontalBox {
+        Text { text: "Estilo de juego:"; vertical-alignment: center; }
+        ComboBox {
+            model: ["balanced", "passive", "aggressive"];
+            current-value: root.xpe-playstyle;
+            selected(value) => { root.xpe-playstyle = value; root.xpe-playstyle-changed(value); }
+        }
+    }
+    HorizontalBox {
+        Text { text: "Modo de equipo:"; vertical-alignment: center; }
+        ComboBox {
+            model: ["auto", "1v1", "2v2"];
+            current-value: root.xpe-team-mode;
+            selected(value) => { root.xpe-team-mode = value; root.xpe-team-mode-changed(value); }
+        }
+    }
+    Text { text: "El cerebro elige al objetivo mas cercano (o al atacante en 2v2 sin team ids). passive: solo castiga ventanas libres. balanced: ventanas generales. aggressive: avanza hacia el elegido y remata antes."; color: #6c7480; font-size: 11px; wrap: word-wrap; }
     Text { text: "Los ajustes se guardan en config.json (perfil activo). Solo para pruebas en entornos controlados."; color: #6c7480; font-size: 11px; wrap: word-wrap; }
 }

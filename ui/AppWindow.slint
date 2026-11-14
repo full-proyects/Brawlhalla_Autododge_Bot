@@ -64,6 +64,8 @@ export component MainWindow inherits Window {
     in-out property <bool> yumiko-use-signatures: false;
     in-out property <int> yumiko-kill-damage: 700;
     in property <string> yumiko-kill-damage-label: "700 dmg";
+    in-out property <string> xpe-playstyle: "balanced";
+    in-out property <string> xpe-team-mode: "auto";
     in-out property <float> ui-scale: 1.0;
     in property <string> ui-scale-label: "100%";
     in-out property <string> settings-search: "";
@@ -101,6 +103,8 @@ export component MainWindow inherits Window {
     callback prediction-aggression-changed(float);
     callback yumiko-use-signatures-changed(bool);
     callback yumiko-kill-damage-changed(int);
+    callback xpe-playstyle-changed(string);
+    callback xpe-team-mode-changed(string);
     callback ui-scale-changed(float);
     callback save-profile(string);
     callback load-profile(string);
@@ -147,6 +151,8 @@ export component MainWindow inherits Window {
                     auto-recover: root.auto-recover;
                     react-chance: root.react-chance;
                     react-chance-label: root.react-chance-label;
+                    xpe-playstyle: root.xpe-playstyle;
+                    xpe-team-mode: root.xpe-team-mode;
                     request-toggle-bot => { root.toggle-active(); }
                     request-toggle-dry-run => { root.toggle-dry-run(); }
                     request-toggle-safe-mode => { root.toggle-safe-mode(); }
@@ -159,6 +165,8 @@ export component MainWindow inherits Window {
                     min-dodge-distance-changed(value) => { root.min-dodge-distance = value; root.min-dodge-distance-changed(value); }
                     auto-recover-changed(value) => { root.auto-recover = value; root.auto-recover-changed(value); }
                     react-chance-changed(value) => { root.react-chance = value; root.react-chance-changed(value); }
+                    xpe-playstyle-changed(value) => { root.xpe-playstyle = value; root.xpe-playstyle-changed(value); }
+                    xpe-team-mode-changed(value) => { root.xpe-team-mode = value; root.xpe-team-mode-changed(value); }
                 }
             }
             Tab {

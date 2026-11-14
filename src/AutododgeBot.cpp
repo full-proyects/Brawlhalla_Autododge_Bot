@@ -9,6 +9,7 @@
 #include "LocalCalibrator.h"
 #include "OffenseController.h"
 #include "XpeYumikoBot.h"
+#include "XpeBrain.h"
 #include "OffsetValidator.h"
 #include "combo_engine.h"
 #include "config.h"
@@ -222,6 +223,8 @@ struct AutododgeBot::Impl {
             a.remaining_options = mem.read<int>(a.entity_ptr + Offsets::REMAINING_OPTIONS);
             a.stocks = mem.read<int>(a.entity_ptr + Offsets::STOCKS);
             a.knocked_back = mem.read<int>(a.entity_ptr + Offsets::KNOCKED_BACK);
+            const int xpeTeamOffset = Config::instance().xpe_team_offset;
+            if (xpeTeamOffset > 0) a.team_id = mem.read<int>(a.entity_ptr + static_cast<uintptr_t>(xpeTeamOffset));
         }
         a.valid = true;
         return a;
@@ -631,6 +634,20 @@ struct AutododgeBot::Impl {
             return;
         }
 
+        // XPE Brain: elige el objetivo del ofensivo ("el elegido") entre los
+        // actores validos. La defensa sigue reactiva: si alguien ataca, ese
+        // atacante manda para el dodge.
+        xpe::TargetSelection brainSelection;
+        if (local_found && (ui.offenseEnabled.load() || cfg.offense_enabled)) {
+            brainSelection = xpe::XpeBrain::SelectTarget(actors, localActor, xpe::ParseTeamMode(cfg.xpe_team_mode));
+            if (!enemy_attacking && brainSelection.target && brainSelection.target->valid_position &&
+                brainSelection.target->dp != enemyActor.dp) {
+                enemyActor = *brainSelection.target;
+                enemy_x = enemyActor.pos_x;
+                enemy_y = enemyActor.pos_y;
+            }
+        }
+
         youVel.Update(local_x, local_y, nowMs);
         enyVel.Update(enemy_x, enemy_y, nowMs);
 
@@ -714,6 +731,9 @@ struct AutododgeBot::Impl {
             }
         } else if (local_found && enemy_found && (ui.offenseEnabled.load() || cfg.offense_enabled) && !ui.dryRun.load()) {
             const int forced = cfg.combo_recognition_enabled ? combo.PendingMoveId(nowMs) : -1;
+            const xpe::Playstyle xpeStyle = xpe::ParsePlaystyle(cfg.xpe_playstyle);
+            const bool xpeStunned = enemyActor.is_stunned != 0;
+            const bool xpeGenericAllowed = xpe::XpeBrain::OffenseAllowed(xpeStyle, forced != -1, xpeStunned, enemy_attacking);
             // XPE Bot (Yumiko): legend-specific true-combo chains take precedence.
             const bool xpeYumikoActive = (cfg.yumiko_mode_enabled || ui.yumikoEnabled.load()) &&
                 localActor.has_legend && localActor.legend_id == xpe::kYumikoLegendId;
@@ -731,7 +751,8 @@ struct AutododgeBot::Impl {
                     }
                 } else {
                     const int sigId = xpeYumiko.PickSignature(localActor, enemyActor,
-                                                              cfg.yumiko_use_signatures, cfg.yumiko_kill_damage);
+                                                              cfg.yumiko_use_signatures,
+                                                              static_cast<int>(cfg.yumiko_kill_damage * xpe::XpeBrain::SigThresholdMultiplier(xpeStyle)));
                     if (sigId != -1) {
                         xpe::ExecuteYumikoSignature(input, sigId, towardRight);
                         xpeYumiko.Reset();
@@ -739,7 +760,13 @@ struct AutododgeBot::Impl {
                     }
                 }
             }
-            const AttackChoice choice = OffenseController::PickAttack(localActor, enemyActor, youVel, enyVel, forced);
+            const AttackChoice choice = xpeGenericAllowed
+                ? OffenseController::PickAttack(localActor, enemyActor, youVel, enyVel, forced)
+                : AttackChoice{};
+            if (!xpeGenericAllowed) {
+                const WORD approachKey = xpe::XpeBrain::ApproachKey(localActor, enemyActor, xpeStyle, cfg.min_dodge_distance, nowMs);
+                if (approachKey) input.Press(approachKey);
+            }
             if (choice.move) {
                 OffenseController::Execute(input, *choice.move, towardRight);
                 if (!xpeYumikoActive && choice.move->combo_next != -1) combo.OnHitConfirmed(choice.id, nowMs);

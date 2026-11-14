@@ -114,6 +114,8 @@ namespace {
             snprintf(kdmg, sizeof(kdmg), "%d dmg", config.yumiko_kill_damage);
             window->set_yumiko_kill_damage_label(slint::SharedString(kdmg));
         }
+        window->set_xpe_playstyle(slint::SharedString(config.xpe_playstyle.c_str()));
+        window->set_xpe_team_mode(slint::SharedString(config.xpe_team_mode.c_str()));
         window->set_combo_recognition(config.combo_recognition_enabled);
         window->set_prediction_tuning(config.prediction_tuning_enabled);
         window->set_prediction_aggression(config.prediction_aggression);
@@ -203,6 +205,12 @@ int Gui::run(UiState& state) {
         state.yumikoEnabled = value;
     });
     window->on_yumiko_use_signatures_changed([](bool value) { Config::instance().yumiko_use_signatures = value; });
+    window->on_xpe_playstyle_changed([](slint::SharedString value) {
+        Config::instance().xpe_playstyle = std::string(value);
+    });
+    window->on_xpe_team_mode_changed([](slint::SharedString value) {
+        Config::instance().xpe_team_mode = std::string(value);
+    });
     window->on_yumiko_kill_damage_changed([window](int value) {
         Config::instance().yumiko_kill_damage = value;
         char label[16];

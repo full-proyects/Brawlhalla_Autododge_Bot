@@ -62,6 +62,7 @@ struct Actor {
     int can_dodge = 0;
     int is_stunned = 0;
     int local_marker = -999;
+    int team_id = -1;  // XPE Brain: team slot (0-3) leido via xpe_team_offset; -1 = desconocido
     double damage = 0;
     int legend_id = 0;
     bool has_legend = false;

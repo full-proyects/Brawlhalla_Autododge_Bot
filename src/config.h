@@ -65,6 +65,9 @@ struct SavedProfile {
     bool yumiko_mode_enabled = false;
     bool yumiko_use_signatures = false;
     int yumiko_kill_damage = 130;
+    std::string xpe_playstyle = "balanced";
+    std::string xpe_team_mode = "auto";
+    int xpe_team_offset = 0;
     float ui_scale = 1.0f;
     bool analysis_mode = false;
     bool weapon_swap_detection = true;
@@ -248,6 +251,9 @@ public:
         current_profile_.yumiko_mode_enabled = yumiko_mode_enabled;
         current_profile_.yumiko_use_signatures = yumiko_use_signatures;
         current_profile_.yumiko_kill_damage = yumiko_kill_damage;
+        current_profile_.xpe_playstyle = xpe_playstyle;
+        current_profile_.xpe_team_mode = xpe_team_mode;
+        current_profile_.xpe_team_offset = xpe_team_offset;
         current_profile_.ui_scale = ui_scale;
         current_profile_.analysis_mode = analysis_mode;
         current_profile_.weapon_swap_detection = weapon_swap_detection;
@@ -410,6 +416,9 @@ public:
         yumiko_mode_enabled = false;
         yumiko_use_signatures = false;
         yumiko_kill_damage = 130;
+        xpe_playstyle = "balanced";
+        xpe_team_mode = "auto";
+        xpe_team_offset = 0;
         ui_scale = 1.0f;
         analysis_mode = false;
         weapon_swap_detection = true;
@@ -465,6 +474,9 @@ public:
         yumiko_mode_enabled = profile.yumiko_mode_enabled;
         yumiko_use_signatures = profile.yumiko_use_signatures;
         yumiko_kill_damage = profile.yumiko_kill_damage;
+        xpe_playstyle = profile.xpe_playstyle;
+        xpe_team_mode = profile.xpe_team_mode;
+        xpe_team_offset = profile.xpe_team_offset;
         ui_scale = profile.ui_scale;
         analysis_mode = profile.analysis_mode;
         weapon_swap_detection = profile.weapon_swap_detection;
@@ -622,6 +634,15 @@ public:
         if (root.contains("yumiko_kill_damage") && root["yumiko_kill_damage"].is_number()) {
             profile.yumiko_kill_damage = (std::max)(0, (std::min)(999, root["yumiko_kill_damage"].get<int>()));
         }
+        if (root.contains("xpe_playstyle") && root["xpe_playstyle"].is_string()) {
+            profile.xpe_playstyle = root["xpe_playstyle"].get<std::string>();
+        }
+        if (root.contains("xpe_team_mode") && root["xpe_team_mode"].is_string()) {
+            profile.xpe_team_mode = root["xpe_team_mode"].get<std::string>();
+        }
+        if (root.contains("xpe_team_offset") && root["xpe_team_offset"].is_number()) {
+            profile.xpe_team_offset = (std::max)(0, root["xpe_team_offset"].get<int>());
+        }
         if (root.contains("ui_scale") && root["ui_scale"].is_number()) {
             profile.ui_scale = SanitizeFloat(static_cast<float>(root["ui_scale"].get<double>()), 1.0f, 0.75f, 1.5f);
         }
@@ -713,6 +734,9 @@ public:
         root["yumiko_mode_enabled"] = profile.yumiko_mode_enabled;
         root["yumiko_use_signatures"] = profile.yumiko_use_signatures;
         root["yumiko_kill_damage"] = profile.yumiko_kill_damage;
+        root["xpe_playstyle"] = profile.xpe_playstyle;
+        root["xpe_team_mode"] = profile.xpe_team_mode;
+        root["xpe_team_offset"] = profile.xpe_team_offset;
         root["ui_scale"] = profile.ui_scale;
         root["analysis_mode"] = profile.analysis_mode;
         root["weapon_swap_detection"] = profile.weapon_swap_detection;
@@ -774,6 +798,9 @@ public:
     bool yumiko_mode_enabled = false;
     bool yumiko_use_signatures = false;
     int yumiko_kill_damage = 130;
+    std::string xpe_playstyle = "balanced";
+    std::string xpe_team_mode = "auto";
+    int xpe_team_offset = 0;
     float ui_scale = 1.0f;
     bool analysis_mode = false;
     bool weapon_swap_detection = true;
