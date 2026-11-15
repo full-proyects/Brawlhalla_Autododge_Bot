@@ -20,7 +20,7 @@ if ([string]::IsNullOrWhiteSpace($SlintDir)) { $SlintDir = 'C:\Program Files\Sli
 $slintDll = Join-Path $SlintDir 'lib\slint_cpp.dll'
 if (-not (Test-Path -LiteralPath $slintDll)) { throw "Slint runtime DLL was not found: $slintDll" }
 
-if ([string]::IsNullOrWhiteSpace($OutputDirectory)) { $OutputDirectory = Join-Path $projectRoot "dist\BrawlhallaAutododge-$Version" }
+if ([string]::IsNullOrWhiteSpace($OutputDirectory)) { $OutputDirectory = Join-Path $projectRoot "dist\XPEBot-$Version" }
 $OutputDirectory = [System.IO.Path]::GetFullPath($OutputDirectory)
 $outputRoot = [System.IO.Path]::GetFullPath((Join-Path $projectRoot 'dist'))
 $outputPrefix = $outputRoot.TrimEnd([System.IO.Path]::DirectorySeparatorChar) + [System.IO.Path]::DirectorySeparatorChar
@@ -29,7 +29,24 @@ if (-not $OutputDirectory.StartsWith($outputPrefix, [System.StringComparison]::O
 if (Test-Path -LiteralPath $OutputDirectory) { Remove-Item -LiteralPath $OutputDirectory -Recurse -Force }
 New-Item -ItemType Directory -Path $OutputDirectory | Out-Null
 
-Copy-Item -LiteralPath $BinaryPath -Destination (Join-Path $OutputDirectory 'BrawlhallaAutododge.exe')
+Copy-Item -LiteralPath $BinaryPath -Destination (Join-Path $OutputDirectory 'XPEBot.exe')
+
+# MinGW-built binaries need the MinGW runtime DLLs shipped alongside.
+$binaryBytes = [System.IO.File]::ReadAllBytes($BinaryPath)
+$importText = [System.Text.Encoding]::ASCII.GetString($binaryBytes)
+if ($importText.Contains('libstdc++-6.dll')) {
+    $mingwBin = $env:MINGW_BIN
+    if ([string]::IsNullOrWhiteSpace($mingwBin)) {
+        $gpp = Get-Command g++.exe -ErrorAction SilentlyContinue | Select-Object -First 1 -ExpandProperty Source
+        if ($gpp) { $mingwBin = Split-Path -Parent $gpp }
+    }
+    if ([string]::IsNullOrWhiteSpace($mingwBin) -or -not (Test-Path -LiteralPath $mingwBin)) {
+        throw 'MinGW runtime DLLs are required but MINGW_BIN is not set and g++.exe was not found on PATH.'
+    }
+    foreach ($runtimeDll in @('libgcc_s_seh-1.dll', 'libstdc++-6.dll', 'libwinpthread-1.dll')) {
+        Copy-Item -LiteralPath (Join-Path $mingwBin $runtimeDll) -Destination $OutputDirectory
+    }
+}
 Copy-Item -LiteralPath $slintDll -Destination $OutputDirectory
 Copy-Item -LiteralPath (Join-Path $projectRoot 'LICENSE.txt') -Destination $OutputDirectory
 Copy-Item -LiteralPath (Join-Path $projectRoot 'README.md') -Destination (Join-Path $OutputDirectory 'README.md')
@@ -37,8 +54,8 @@ New-Item -ItemType Directory -Path (Join-Path $OutputDirectory 'config') | Out-N
 Copy-Item -LiteralPath (Join-Path $projectRoot 'config\config.json') -Destination (Join-Path $OutputDirectory 'config\config.json')
 Copy-Item -LiteralPath (Join-Path $projectRoot 'data') -Destination (Join-Path $OutputDirectory 'data') -Recurse
 
-$checksum = Get-FileHash -LiteralPath (Join-Path $OutputDirectory 'BrawlhallaAutododge.exe') -Algorithm SHA256
-"$($checksum.Hash)  BrawlhallaAutododge.exe" | Set-Content -LiteralPath (Join-Path $OutputDirectory 'SHA256SUMS.txt') -NoNewline
+$checksum = Get-FileHash -LiteralPath (Join-Path $OutputDirectory 'XPEBot.exe') -Algorithm SHA256
+"$($checksum.Hash)  XPEBot.exe" | Set-Content -LiteralPath (Join-Path $OutputDirectory 'SHA256SUMS.txt') -NoNewline
 
 $archive = "${OutputDirectory}.zip"
 if (Test-Path -LiteralPath $archive) { Remove-Item -LiteralPath $archive -Force }

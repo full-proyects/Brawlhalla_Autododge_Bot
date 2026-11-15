@@ -10,7 +10,7 @@ import { ProfilesPage } from "pages/ProfilesPage.slint";
 import { DiagnosticsPage } from "pages/DiagnosticsPage.slint";
 
 export component MainWindow inherits Window {
-    title: "XPE Bot - Brawlhalla (Yumiko Edition)";
+    title: "XPE Bot - Brawlhalla";
     preferred-width: 1100px;
     preferred-height: 720px;
     background: #0e0f11;
@@ -64,6 +64,9 @@ export component MainWindow inherits Window {
     in-out property <bool> yumiko-use-signatures: false;
     in-out property <int> yumiko-kill-damage: 700;
     in property <string> yumiko-kill-damage-label: "700 dmg";
+    in-out property <bool> mordex-enabled: false;
+    in-out property <bool> nix-enabled: false;
+    in-out property <bool> artemis-enabled: false;
     in-out property <string> xpe-playstyle: "balanced";
     in-out property <string> xpe-team-mode: "auto";
     in-out property <float> ui-scale: 1.0;
@@ -103,6 +106,9 @@ export component MainWindow inherits Window {
     callback prediction-aggression-changed(float);
     callback yumiko-use-signatures-changed(bool);
     callback yumiko-kill-damage-changed(int);
+    callback mordex-enabled-changed(bool);
+    callback nix-enabled-changed(bool);
+    callback artemis-enabled-changed(bool);
     callback xpe-playstyle-changed(string);
     callback xpe-team-mode-changed(string);
     callback ui-scale-changed(float);
@@ -143,6 +149,9 @@ export component MainWindow inherits Window {
                     yumiko-use-signatures: root.yumiko-use-signatures;
                     yumiko-kill-damage: root.yumiko-kill-damage;
                     yumiko-kill-damage-label: root.yumiko-kill-damage-label;
+                    mordex-enabled: root.mordex-enabled;
+                    nix-enabled: root.nix-enabled;
+                    artemis-enabled: root.artemis-enabled;
                     combo-recognition: root.combo-recognition;
                     prediction-aggression: root.prediction-aggression;
                     prediction-aggression-label: root.prediction-aggression-label;
@@ -160,6 +169,9 @@ export component MainWindow inherits Window {
                     yumiko-enabled-changed(value) => { root.yumiko-enabled = value; root.yumiko-enabled-changed(value); }
                     yumiko-use-signatures-changed(value) => { root.yumiko-use-signatures = value; root.yumiko-use-signatures-changed(value); }
                     yumiko-kill-damage-changed(value) => { root.yumiko-kill-damage = value; root.yumiko-kill-damage-changed(value); }
+                    mordex-enabled-changed(value) => { root.mordex-enabled = value; root.mordex-enabled-changed(value); }
+                    nix-enabled-changed(value) => { root.nix-enabled = value; root.nix-enabled-changed(value); }
+                    artemis-enabled-changed(value) => { root.artemis-enabled = value; root.artemis-enabled-changed(value); }
                     combo-recognition-changed(value) => { root.combo-recognition = value; root.combo-recognition-changed(value); }
                     prediction-aggression-changed(value) => { root.prediction-aggression = value; root.prediction-aggression-changed(value); }
                     min-dodge-distance-changed(value) => { root.min-dodge-distance = value; root.min-dodge-distance-changed(value); }

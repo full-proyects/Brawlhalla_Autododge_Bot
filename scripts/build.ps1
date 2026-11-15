@@ -9,7 +9,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $projectRoot = Split-Path -Parent $PSScriptRoot
-$solution = Join-Path $projectRoot 'brawlhalla autododge.sln'
+$solution = Join-Path $projectRoot 'XPEBot.sln'
 
 if (-not (Test-Path -LiteralPath $solution)) { throw "Solution was not found: $solution" }
 if ([string]::IsNullOrWhiteSpace($SlintDir)) { $SlintDir = 'C:\Program Files\Slint-cpp 1.17.1' }

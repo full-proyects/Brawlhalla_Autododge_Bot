@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.14.36414.22 d17.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "brawlhalla autododge", "brawlhalla autododge.vcxproj", "{ACFD597F-F528-4C30-B366-51EA36ABA8BE}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "XPEBot", "XPEBot.vcxproj", "{ACFD597F-F528-4C30-B366-51EA36ABA8BE}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

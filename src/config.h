@@ -65,6 +65,9 @@ struct SavedProfile {
     bool yumiko_mode_enabled = false;
     bool yumiko_use_signatures = false;
     int yumiko_kill_damage = 130;
+    bool mordex_mode_enabled = false;
+    bool nix_mode_enabled = false;
+    bool artemis_mode_enabled = false;
     std::string xpe_playstyle = "balanced";
     std::string xpe_team_mode = "auto";
     int xpe_team_offset = 0;
@@ -251,6 +254,9 @@ public:
         current_profile_.yumiko_mode_enabled = yumiko_mode_enabled;
         current_profile_.yumiko_use_signatures = yumiko_use_signatures;
         current_profile_.yumiko_kill_damage = yumiko_kill_damage;
+        current_profile_.mordex_mode_enabled = mordex_mode_enabled;
+        current_profile_.nix_mode_enabled = nix_mode_enabled;
+        current_profile_.artemis_mode_enabled = artemis_mode_enabled;
         current_profile_.xpe_playstyle = xpe_playstyle;
         current_profile_.xpe_team_mode = xpe_team_mode;
         current_profile_.xpe_team_offset = xpe_team_offset;
@@ -416,6 +422,9 @@ public:
         yumiko_mode_enabled = false;
         yumiko_use_signatures = false;
         yumiko_kill_damage = 130;
+        mordex_mode_enabled = false;
+        nix_mode_enabled = false;
+        artemis_mode_enabled = false;
         xpe_playstyle = "balanced";
         xpe_team_mode = "auto";
         xpe_team_offset = 0;
@@ -474,6 +483,9 @@ public:
         yumiko_mode_enabled = profile.yumiko_mode_enabled;
         yumiko_use_signatures = profile.yumiko_use_signatures;
         yumiko_kill_damage = profile.yumiko_kill_damage;
+        mordex_mode_enabled = profile.mordex_mode_enabled;
+        nix_mode_enabled = profile.nix_mode_enabled;
+        artemis_mode_enabled = profile.artemis_mode_enabled;
         xpe_playstyle = profile.xpe_playstyle;
         xpe_team_mode = profile.xpe_team_mode;
         xpe_team_offset = profile.xpe_team_offset;
@@ -634,6 +646,15 @@ public:
         if (root.contains("yumiko_kill_damage") && root["yumiko_kill_damage"].is_number()) {
             profile.yumiko_kill_damage = (std::max)(0, (std::min)(999, root["yumiko_kill_damage"].get<int>()));
         }
+        if (root.contains("mordex_mode_enabled") && root["mordex_mode_enabled"].is_boolean()) {
+            profile.mordex_mode_enabled = root["mordex_mode_enabled"].get<bool>();
+        }
+        if (root.contains("nix_mode_enabled") && root["nix_mode_enabled"].is_boolean()) {
+            profile.nix_mode_enabled = root["nix_mode_enabled"].get<bool>();
+        }
+        if (root.contains("artemis_mode_enabled") && root["artemis_mode_enabled"].is_boolean()) {
+            profile.artemis_mode_enabled = root["artemis_mode_enabled"].get<bool>();
+        }
         if (root.contains("xpe_playstyle") && root["xpe_playstyle"].is_string()) {
             profile.xpe_playstyle = root["xpe_playstyle"].get<std::string>();
         }
@@ -734,6 +755,9 @@ public:
         root["yumiko_mode_enabled"] = profile.yumiko_mode_enabled;
         root["yumiko_use_signatures"] = profile.yumiko_use_signatures;
         root["yumiko_kill_damage"] = profile.yumiko_kill_damage;
+        root["mordex_mode_enabled"] = profile.mordex_mode_enabled;
+        root["nix_mode_enabled"] = profile.nix_mode_enabled;
+        root["artemis_mode_enabled"] = profile.artemis_mode_enabled;
         root["xpe_playstyle"] = profile.xpe_playstyle;
         root["xpe_team_mode"] = profile.xpe_team_mode;
         root["xpe_team_offset"] = profile.xpe_team_offset;
@@ -798,6 +822,9 @@ public:
     bool yumiko_mode_enabled = false;
     bool yumiko_use_signatures = false;
     int yumiko_kill_damage = 130;
+    bool mordex_mode_enabled = false;
+    bool nix_mode_enabled = false;
+    bool artemis_mode_enabled = false;
     std::string xpe_playstyle = "balanced";
     std::string xpe_team_mode = "auto";
     int xpe_team_offset = 0;

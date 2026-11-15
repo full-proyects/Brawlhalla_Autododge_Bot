@@ -1,6 +1,6 @@
 name: XPE Bot Build and Release
-# XPE Bot (Yumiko Edition) — automatic build workflow.
-# Copyright (c) 2026 xpe.nett. MIT License.
+# XPE Bot — automatic build workflow.
+# Copyright (c) 2026 xpe.nettt. MIT License.
 
 on:
   pull_request:

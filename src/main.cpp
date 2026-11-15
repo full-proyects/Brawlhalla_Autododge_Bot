@@ -27,10 +27,10 @@ int main() {
     g_botInstance = &bot;
     SetConsoleCtrlHandler(ConsoleHandler, TRUE);
 
-    const bool initialized = bot.init();
-
-    std::thread botThread;
-    if (initialized) botThread = std::thread(&AutododgeBot::run, &bot);
+    // La ventana abre de inmediato: init + hook corren en el hilo del bot.
+    std::thread botThread([&bot] {
+        if (bot.init()) bot.run();
+    });
 
     Gui gui;
     const int result = gui.run(ui);

@@ -107,6 +107,9 @@ namespace {
         window->set_react_chance(config.react_chance);
         window->set_offense_enabled(config.offense_enabled);
         window->set_yumiko_enabled(config.yumiko_mode_enabled);
+        window->set_mordex_enabled(config.mordex_mode_enabled);
+        window->set_nix_enabled(config.nix_mode_enabled);
+        window->set_artemis_enabled(config.artemis_mode_enabled);
         window->set_yumiko_use_signatures(config.yumiko_use_signatures);
         window->set_yumiko_kill_damage(config.yumiko_kill_damage);
         {
@@ -205,6 +208,18 @@ int Gui::run(UiState& state) {
         state.yumikoEnabled = value;
     });
     window->on_yumiko_use_signatures_changed([](bool value) { Config::instance().yumiko_use_signatures = value; });
+    window->on_mordex_enabled_changed([&state](bool value) {
+        Config::instance().mordex_mode_enabled = value;
+        state.mordexEnabled = value;
+    });
+    window->on_nix_enabled_changed([&state](bool value) {
+        Config::instance().nix_mode_enabled = value;
+        state.nixEnabled = value;
+    });
+    window->on_artemis_enabled_changed([&state](bool value) {
+        Config::instance().artemis_mode_enabled = value;
+        state.artemisEnabled = value;
+    });
     window->on_xpe_playstyle_changed([](slint::SharedString value) {
         Config::instance().xpe_playstyle = std::string(value);
     });

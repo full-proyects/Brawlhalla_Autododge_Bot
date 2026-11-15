@@ -1,8 +1,7 @@
-# XPE Bot — Brawlhalla Yumiko Edition
-
-> **XPE Bot** por **xpe.nett** — capa de ofensiva específica para Yumiko (legend 36, `Ninetails`) con true combos de **martillo** y **arco**, auto-decisiones y remates por firma.
+# XPE Bot - Brawlhalla
+> **XPE Bot** por **xpe.nettt** — capa de ofensiva específica para **Yumiko** (legend 36), **Mordex**, **Artemis** y **Nix**, con true combos de **martillo**, **arco**, **guadaña**, **guantes** y **blasteras**, auto-decisiones y remates por firma.
 >
-> © 2026 xpe.nett. Código base: Brawlhalla Autododge (MIT). Consulta `src/XpeYumikoBot.h` para el motor de combos.
+> © 2026 xpe.nettt. Código base: Brawlhalla Autododge (MIT). Consulta `src/XpeYumikoBot.h` para el motor de combos.
 
 Windows C++ research prototype with a Slint desktop UI, process observation, fighter telemetry, and configurable defensive decision logic.
 
@@ -57,7 +56,7 @@ To create a runtime zip locally after building:
 .\scripts\package_release.ps1 -Version dev
 ```
 
-The resulting `dist\BrawlhallaAutododge-dev.zip` contains the executable, Slint runtime DLL, configuration, game data, license, README, and a SHA-256 checksum.
+The resulting `dist\XPEBot-dev.zip` contains the executable, Slint runtime DLL, configuration, game data, license, README, and a SHA-256 checksum.
 
 ## Automated builds and releases
 
@@ -84,4 +83,4 @@ Do not treat candidate or unconfirmed offsets as verified facts. See [docs/OFFSE
 
 ## License
 
-MIT. See [LICENSE.txt](LICENSE.txt). Módulo XPE Yumiko © 2026 xpe.nett.
+MIT. See [LICENSE.txt](LICENSE.txt). Módulo XPE Yumiko © 2026 xpe.nettt.

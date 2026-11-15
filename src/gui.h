@@ -16,6 +16,9 @@ struct UiState {
     std::atomic<bool> analysisMode{false};
     std::atomic<bool> offenseEnabled{false};
     std::atomic<bool> yumikoEnabled{false};
+    std::atomic<bool> mordexEnabled{false};
+    std::atomic<bool> nixEnabled{false};
+    std::atomic<bool> artemisEnabled{false};
     std::atomic<bool> processFound{false};
     std::atomic<bool> hookInstalled{false};
     std::atomic<bool> safeModeActive{false};

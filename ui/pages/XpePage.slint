@@ -10,6 +10,9 @@ export component XpePage inherits VerticalBox {
     in-out property <bool> offense-enabled: false;
     in-out property <bool> yumiko-enabled: false;
     in-out property <bool> yumiko-use-signatures: false;
+    in-out property <bool> mordex-enabled: false;
+    in-out property <bool> nix-enabled: false;
+    in-out property <bool> artemis-enabled: false;
     in-out property <int> yumiko-kill-damage: 700;
     in property <string> yumiko-kill-damage-label: "700 dmg";
     in-out property <bool> combo-recognition: true;
@@ -29,6 +32,9 @@ export component XpePage inherits VerticalBox {
     callback offense-enabled-changed(bool);
     callback yumiko-enabled-changed(bool);
     callback yumiko-use-signatures-changed(bool);
+    callback mordex-enabled-changed(bool);
+    callback nix-enabled-changed(bool);
+    callback artemis-enabled-changed(bool);
     callback yumiko-kill-damage-changed(int);
     callback combo-recognition-changed(bool);
     callback prediction-aggression-changed(float);
@@ -38,8 +44,8 @@ export component XpePage inherits VerticalBox {
     callback xpe-playstyle-changed(string);
     callback xpe-team-mode-changed(string);
 
-    Text { text: "XPE BOT - Yumiko Edition"; font-size: 22px; font-weight: 700; color: #7ee0a3; }
-    Text { text: "Bot dedicado para Yumiko: true combos de martillo y arco con auto-decisiones. Por xpe.nett."; color: #9098a3; wrap: word-wrap; }
+    Text { text: "XPE BOT - Legends Edition"; font-size: 22px; font-weight: 700; color: #7ee0a3; }
+    Text { text: "Modulos de leyenda: Yumiko, Mordex, Nix y Artemis. True combos por arma con auto-decisiones. Por xpe.nett."; color: #9098a3; wrap: word-wrap; }
 
     Text { text: "Control del bot"; font-size: 16px; font-weight: 600; color: #e6e8eb; }
     HorizontalBox {
@@ -58,14 +64,29 @@ export component XpePage inherits VerticalBox {
     }
     Text { text: "Safe Mode desactiva las acciones ofensivas si la deteccion falla. Dry-run simula sin enviar inputs."; color: #6c7480; font-size: 11px; wrap: word-wrap; }
 
-    Text { text: "XPE Yumiko Mode"; font-size: 16px; font-weight: 600; color: #e6e8eb; }
+    Text { text: "XPE Legend Modes"; font-size: 16px; font-weight: 600; color: #e6e8eb; }
     CheckBox {
         text: "Activar bot de Yumiko (true combos martillo y arco + auto decisiones)";
         checked: root.yumiko-enabled;
         toggled => { root.yumiko-enabled = self.checked; root.yumiko-enabled-changed(self.checked); }
     }
     CheckBox {
-        text: "Rematar con firmas cuando el enemigo llega al danio de ejecucion";
+        text: "Activar bot de Mordex (true combos guadana y guantes + auto decisiones)";
+        checked: root.mordex-enabled;
+        toggled => { root.mordex-enabled = self.checked; root.mordex-enabled-changed(self.checked); }
+    }
+    CheckBox {
+        text: "Activar bot de Nix (true combos guadana y blasteras + auto decisiones)";
+        checked: root.nix-enabled;
+        toggled => { root.nix-enabled = self.checked; root.nix-enabled-changed(self.checked); }
+    }
+    CheckBox {
+        text: "Activar bot de Artemis (true combos lanza y guadana + auto decisiones)";
+        checked: root.artemis-enabled;
+        toggled => { root.artemis-enabled = self.checked; root.artemis-enabled-changed(self.checked); }
+    }
+    CheckBox {
+        text: "Rematar con firmas (cualquier leyenda activa) cuando el enemigo llega al danio de ejecucion";
         checked: root.yumiko-use-signatures;
         toggled => { root.yumiko-use-signatures = self.checked; root.yumiko-use-signatures-changed(self.checked); }
     }

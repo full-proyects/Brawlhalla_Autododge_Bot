@@ -9,6 +9,7 @@
 #include "LocalCalibrator.h"
 #include "OffenseController.h"
 #include "XpeYumikoBot.h"
+#include "XpeLegendBots.h"
 #include "XpeBrain.h"
 #include "OffsetValidator.h"
 #include "combo_engine.h"
@@ -77,6 +78,10 @@ struct AutododgeBot::Impl {
     LocalCalibrator calibrator;
     ComboEngine combo;
     xpe::YumikoBot xpeYumiko;
+    // XPE Bot: legend modules Mordex / Nix / Artemis (single-threaded bot loop).
+    xpe::XpeLegendBot& xpeMordex = xpe::MordexBot();
+    xpe::XpeLegendBot& xpeNix = xpe::NixBot();
+    xpe::XpeLegendBot& xpeArtemis = xpe::ArtemisBot();
     VelocityTracker youVel;
     VelocityTracker enyVel;
     std::ofstream calibrationLog;
@@ -127,6 +132,7 @@ struct AutododgeBot::Impl {
     }
 
     void EnterSafeMode(const std::string& reason, bool automatic) {
+        const bool alreadyInSafeMode = ui.safeModeActive.load();
         input.Reset();
         active = false;
         ui.active = false;
@@ -141,8 +147,10 @@ struct AutododgeBot::Impl {
             ui.lastEvent = std::string(automatic ? "Safe Mode (auto): " : "Safe Mode: ") + reason;
             ui.decisionBanner.clear();
         }
-        Logger::warn(std::string(automatic ? "Safe Mode entered automatically: " : "Safe Mode entered: ") + reason);
-        NotifySound("disabled");
+        if (!alreadyInSafeMode) {
+            Logger::warn(std::string(automatic ? "Safe Mode entered automatically: " : "Safe Mode entered: ") + reason);
+            NotifySound("disabled");
+        }
     }
 
     void ExitSafeMode() {
@@ -396,9 +404,9 @@ struct AutododgeBot::Impl {
         ui.analysisMode = Config::instance().analysis_mode;
         ui.offenseEnabled = Config::instance().offense_enabled;
         useNewOffsets = !Config::instance().use_legacy_offsets;
-        calibrationLog.open("calibration.log", std::ios::out | std::ios::app);
+        calibrationLog.open(LogsDirectory() / "calibration.log", std::ios::out | std::ios::app);
         OpenCsv();
-        Logger::info("Brawlhalla Autododge started");
+        Logger::info("XPE Bot started");
         if (!hotkeys.conflictReport().empty()) Logger::warn(hotkeys.conflictReport());
         if (!gameData.loadAllData()) Logger::warn("Could not load all game data, using defaults");
         ui.moveCount = gameData.getMoveCount();
@@ -469,7 +477,12 @@ struct AutododgeBot::Impl {
                     ui.validationText = report.toText();
                 }
                 if (report.criticalFailure && ui.safeModeEnabled.load() && !ui.safeModeActive.load()) {
-                    EnterSafeMode(report.summary, true);
+                    if (!ui.processFound.load()) {
+                        // Sin juego abierto no hay nada que proteger: aviso amable en vez de alarma.
+                        SetStatus("Esperando Brawlhalla - abre el juego (Steam) para que el bot lea la memoria");
+                    } else {
+                        EnterSafeMode(report.summary, true);
+                    }
                 }
             }
 
@@ -521,7 +534,10 @@ struct AutododgeBot::Impl {
         if (autoRecover && (!hookTarget || !codeCave || !mem.hproccess) && processId != 0) {
             if (hookTarget || codeCave) NotifySound("hook_lost");
             if (!installHook()) {
-                if (++consecutiveHookFailures >= kAutoPauseAfterFailures) EnterSafeMode("hook unavailable", true);
+                if (++consecutiveHookFailures >= kAutoPauseAfterFailures) {
+                    EnterSafeMode("hook unavailable", true);
+                    consecutiveHookFailures = 0;
+                }
                 return;
             }
             consecutiveHookFailures = 0;
@@ -738,6 +754,27 @@ struct AutododgeBot::Impl {
             const bool xpeYumikoActive = (cfg.yumiko_mode_enabled || ui.yumikoEnabled.load()) &&
                 localActor.has_legend && localActor.legend_id == xpe::kYumikoLegendId;
             const bool towardRight = enemy_x >= local_x;
+            // XPE Bot: legend modules Mordex / Nix / Artemis.
+            xpe::XpeLegendBot* xpeLegend = nullptr;
+            const char* xpeLegendName = "";
+            if (localActor.has_legend && !xpeYumikoActive) {
+                if (localActor.legend_id == xpe::kMordexLegendId &&
+                    (cfg.mordex_mode_enabled || ui.mordexEnabled.load())) {
+                    xpeLegend = &xpeMordex;
+                    xpeLegendName = "Mordex";
+                } else if (localActor.legend_id == xpe::kNixLegendId &&
+                           (cfg.nix_mode_enabled || ui.nixEnabled.load())) {
+                    xpeLegend = &xpeNix;
+                    xpeLegendName = "Nix";
+                } else if (localActor.legend_id == xpe::kArtemisLegendId &&
+                           (cfg.artemis_mode_enabled || ui.artemisEnabled.load())) {
+                    xpeLegend = &xpeArtemis;
+                    xpeLegendName = "Artemis";
+                }
+            }
+            const bool xpeSigsEnabled = cfg.yumiko_use_signatures;
+            const float xpeKillDamage = cfg.yumiko_kill_damage *
+                xpe::XpeBrain::SigThresholdMultiplier(xpeStyle);
             if (xpeYumikoActive) {
                 const int yForced = xpeYumiko.PickForced(localActor, enemyActor, nowMs);
                 if (yForced != -1) {
@@ -759,6 +796,27 @@ struct AutododgeBot::Impl {
                         PublishDecision({"XPE SIG", "Yumiko signature", "Kill-damage finisher", 0, 85});
                     }
                 }
+            } else if (xpeLegend) {
+                const int lForced = xpeLegend->PickForced(localActor, enemyActor, nowMs);
+                if (lForced != -1) {
+                    const AttackChoice lChoice = OffenseController::PickAttack(localActor, enemyActor, youVel, enyVel, lForced);
+                    if (lChoice.move) {
+                        OffenseController::Execute(input, *lChoice.move, towardRight);
+                        xpeLegend->OnExecuted(localActor, enemyActor, lChoice.id, nowMs);
+                        PublishDecision({"XPE COMBO", lChoice.move->name ? lChoice.move->name : "move",
+                                         std::string(xpeLegendName) + ": " + xpeLegend->ActiveChainName(),
+                                         lChoice.hitFrame,
+                                         std::clamp(90 - lChoice.hitFrame * 3, 20, 95)});
+                    }
+                } else {
+                    const int sigId = xpeLegend->PickSignature(localActor, enemyActor);
+                    if (sigId != -1 && xpeSigsEnabled && enemyActor.damage >= xpeKillDamage) {
+                        xpe::ExecuteLegendSignature(input, sigId, towardRight);
+                        xpeLegend->Reset();
+                        PublishDecision({"XPE SIG", "Legend signature",
+                                         std::string(xpeLegendName) + " kill-damage finisher", 0, 85});
+                    }
+                }
             }
             const AttackChoice choice = xpeGenericAllowed
                 ? OffenseController::PickAttack(localActor, enemyActor, youVel, enyVel, forced)
@@ -769,8 +827,9 @@ struct AutododgeBot::Impl {
             }
             if (choice.move) {
                 OffenseController::Execute(input, *choice.move, towardRight);
-                if (!xpeYumikoActive && choice.move->combo_next != -1) combo.OnHitConfirmed(choice.id, nowMs);
+                if (!xpeYumikoActive && !xpeLegend && choice.move->combo_next != -1) combo.OnHitConfirmed(choice.id, nowMs);
                 if (xpeYumikoActive) xpeYumiko.OnExecuted(choice.id, nowMs);
+                if (xpeLegend) xpeLegend->OnExecuted(localActor, enemyActor, choice.id, nowMs);
                 PublishDecision({"ATTACK", choice.move->name ? choice.move->name : "move",
                                  "Opponent in simulated hit window", choice.hitFrame,
                                  std::clamp(90 - choice.hitFrame * 3, 20, 95)});
