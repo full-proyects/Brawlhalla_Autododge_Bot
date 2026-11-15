@@ -71,6 +71,34 @@ git push origin v1.0.0
 
 The tagged workflow builds the application, packages the runtime zip, and creates a GitHub Release with generated release notes and the zip attached. No local packaging or manual release upload is needed.
 
+## Actualizaciones automaticas
+
+XPE Bot se actualiza solo desde GitHub Releases. Al iniciar, el hilo del updater
+consulta `releases/latest` del repositorio configurado (`github_repo`, por
+defecto este repo), compara la version del tag con la del recurso VERSIONINFO del
+ejecutable y, si es mayor, descarga el `.zip`, lo instala y se reinicia.
+
+- `auto_update` (Config > Settings) activa o desactiva la instalacion automatica.
+  Con el desactivado, el chequeo solo informa y el boton *Instalar* aplica la
+  version pendiente cuando tu quieras.
+- La instalacion la hace un script de PowerShell desacoplado que espera el cierre
+  del proceso, reemplaza los archivos y **conserva `config/config.json`** y tu
+  historial de logs.
+- Si la carpeta del ejecutable no es escribible (por ejemplo en `Program Files`),
+  el paquete se descarga en `%LOCALAPPDATA%\XPEBot\update` y se avisa en la UI.
+  El instalador deja la app en `%LOCALAPPDATA%\XPEBot`, que si es escribible.
+
+Para publicar una version nueva no hace falta tocar archivos: ejecuta el workflow
+**XPE Bot Auto Release** (`workflow_dispatch`) eligiendo `patch`, `minor` o
+`major`. El workflow calcula la version a partir del ultimo tag, actualiza
+`src/app.rc`, commitea, crea el tag, y dispara el build que publica en el release:
+
+- `XPEBot-<tag>.zip` — paquete portable autocontenido (incluye runtime VC++).
+- `XPEBot-Setup-<version>.exe` — instalador Inno Setup, instalacion por usuario.
+- `SHA256SUMS.txt` — checksums de ambos.
+
+Los clientes instalados detectan esa version en el siguiente arranque.
+
 ## Panel de control (repo aparte)
 
 El panel web local **xpe-bot-panel** vive en su propio repositorio: sirve una SPA en `127.0.0.1` para ver estado, editar el `config.json` en caliente y ver logs del bot. Sin dependencias externas, solo Python stdlib.

@@ -306,9 +306,9 @@ int Gui::run(UiState& state) {
             slint::invoke_from_event_loop([window, &state] { RefreshWindow(window, state); });
         }
         // Cierre solicitado (hotkey, bandeja o actualizacion): termina el bucle de UI.
-        slint::invoke_from_event_loop([window] {
+        slint::invoke_from_event_loop([window]() mutable {
             window->hide();
-            slint::quit_event_loop();
+            (void)slint::quit_event_loop();
         });
     });
 

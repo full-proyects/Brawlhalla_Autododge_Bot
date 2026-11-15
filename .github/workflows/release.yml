@@ -1,6 +1,11 @@
 name: XPE Bot Build and Release
 # XPE Bot — automatic build workflow.
 # Copyright (c) 2026 xpe.nettt. MIT License.
+#
+# Build en cada push a main; en tags v* publica:
+#   XPEBot-<tag>.zip          (paquete portable, autocontenido con runtime VC++)
+#   XPEBot-Setup-<version>.exe (instalador Inno Setup, instalacion por usuario)
+#   SHA256SUMS.txt            (checksums de los dos anteriores)
 
 on:
   pull_request:
@@ -55,12 +60,32 @@ jobs:
           if ($null -eq $binary) { throw 'Release executable was not produced.' }
           $version = if ($env:GITHUB_REF_TYPE -eq 'tag') { $env:GITHUB_REF_NAME } else { "build-$env:GITHUB_RUN_NUMBER" }
           ./scripts/package_release.ps1 -BinaryPath $binary.FullName -SlintDir $env:SLINT_DIR -Version $version
+          $clean = if ($env:GITHUB_REF_TYPE -eq 'tag') { $env:GITHUB_REF_NAME -replace '^v', '' } else { "0.0.$env:GITHUB_RUN_NUMBER" }
+          "XPE_VERSION=$clean" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Build installer
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $iscc = 'C:\Program Files (x86)\Inno Setup 6\ISCC.exe'
+          if (-not (Test-Path -LiteralPath $iscc)) {
+            choco install innosetup -y --no-progress | Out-Null
+          }
+          if (-not (Test-Path -LiteralPath $iscc)) { throw 'Inno Setup compiler (ISCC.exe) was not found.' }
+          $packageDir = Get-ChildItem dist -Directory | Select-Object -First 1
+          if ($null -eq $packageDir) { throw 'Packaged output directory was not found.' }
+          $outputDir = Join-Path $PWD 'dist\installer'
+          & $iscc "/DAppVersion=$env:XPE_VERSION" "/DSourceDir=$($packageDir.FullName)" "/DOutputDir=$outputDir" 'installer\XPEBot.iss'
+          if ($LASTEXITCODE -ne 0) { throw "ISCC failed with exit code $LASTEXITCODE." }
+          Get-ChildItem $outputDir
 
       - name: Upload runtime package
         uses: actions/upload-artifact@v4
         with:
           name: XPEBot-windows-x64
-          path: dist/*.zip
+          path: |
+            dist/*.zip
+            dist/installer/*.exe
           if-no-files-found: error
           retention-days: 14
 
@@ -77,8 +102,18 @@ jobs:
           name: XPEBot-windows-x64
           path: release-assets
 
+      - name: Collect release assets
+        run: |
+          mkdir -p out
+          find release-assets -type f \( -name '*.zip' -o -name '*.exe' \) -exec cp {} out/ \;
+          ls -la out
+          cd out && sha256sum * > SHA256SUMS.txt && cat SHA256SUMS.txt
+
       - name: Publish release assets
         uses: softprops/action-gh-release@v2
         with:
           generate_release_notes: true
-          files: release-assets/*.zip
+          files: |
+            out/*.zip
+            out/*.exe
+            out/SHA256SUMS.txt
