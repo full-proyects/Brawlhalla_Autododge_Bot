@@ -60,7 +60,10 @@ int DigitsToInt(const std::string& digits) {
 std::vector<int> ParseVersion(const std::string& version) {
     std::vector<int> parts;
     std::string digits;
-    for (const char c : version) {
+    for (size_t i = 0; i < version.size(); ++i) {
+        const char c = version[i];
+        // Un tag crudo ("v2.0.2") no debe interpretarse como 0.0.0.
+        if (i == 0 && (c == 'v' || c == 'V')) continue;
         if (c >= '0' && c <= '9') {
             digits.push_back(c);
             continue;
