@@ -437,9 +437,11 @@ std::filesystem::path UpdateDirectory() {
     const auto preferred = exeDir / "update";
     if (DirectoryWritable(preferred)) return preferred;
 
-    const wchar_t* localAppData = _wgetenv(L"LOCALAPPDATA");
-    if (localAppData && *localAppData) {
-        const auto fallback = std::filesystem::path(localAppData) / "XPEBot" / "update";
+    wchar_t localAppData[MAX_PATH * 2]{};
+    const DWORD localLength = GetEnvironmentVariableW(L"LOCALAPPDATA", localAppData,
+                                                      static_cast<DWORD>(std::size(localAppData)));
+    if (localLength > 0 && localLength < std::size(localAppData)) {
+        const auto fallback = std::filesystem::path(std::wstring(localAppData, localLength)) / "XPEBot" / "update";
         if (DirectoryWritable(fallback)) return fallback;
     }
     return preferred;
