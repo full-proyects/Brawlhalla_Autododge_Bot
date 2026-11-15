@@ -72,6 +72,11 @@ export component MainWindow inherits Window {
     in-out property <float> ui-scale: 1.0;
     in property <string> ui-scale-label: "100%";
     in-out property <string> settings-search: "";
+    in property <string> update-status: "Updates: idle";
+    in property <string> update-version: "";
+    in property <bool> update-available: false;
+    in property <bool> update-busy: false;
+    in-out property <bool> auto-update: true;
 
     in property <[string]> profiles: ["default"];
     in property <string> active-profile: "default";
@@ -112,6 +117,9 @@ export component MainWindow inherits Window {
     callback xpe-playstyle-changed(string);
     callback xpe-team-mode-changed(string);
     callback ui-scale-changed(float);
+    callback auto-update-changed(bool);
+    callback check-updates();
+    callback apply-update();
     callback save-profile(string);
     callback load-profile(string);
     callback duplicate-profile(string, string);
@@ -272,6 +280,14 @@ export component MainWindow inherits Window {
                     minimize-to-tray: root.minimize-to-tray;
                     ui-scale: root.ui-scale;
                     ui-scale-label: root.ui-scale-label;
+                    update-status: root.update-status;
+                    update-version: root.update-version;
+                    update-available: root.update-available;
+                    update-busy: root.update-busy;
+                    auto-update: root.auto-update;
+                    auto-update-changed(value) => { root.auto-update = value; root.auto-update-changed(value); }
+                    check-updates => { root.check-updates(); }
+                    apply-update => { root.apply-update(); }
                     auto-recover-changed(value) => { root.auto-recover = value; root.auto-recover-changed(value); }
                     safe-mode-changed(value) => { root.safe-mode = value; root.safe-mode-changed(value); }
                     process-watchdog-changed(value) => { root.process-watchdog = value; root.process-watchdog-changed(value); }

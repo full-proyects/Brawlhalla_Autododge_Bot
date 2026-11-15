@@ -33,6 +33,10 @@ namespace {
         window->set_debug_text(slint::SharedString(ReadLocked(state, &UiState::debugText)));
         window->set_decision_banner(slint::SharedString(ReadLocked(state, &UiState::decisionBanner)));
         window->set_hotkey_conflict(slint::SharedString(state.hotkeyConflict));
+        window->set_update_status(slint::SharedString(ReadLocked(state, &UiState::updateStatus)));
+        window->set_update_version(slint::SharedString(ReadLocked(state, &UiState::updateVersion)));
+        window->set_update_available(state.updateAvailable.load());
+        window->set_update_busy(state.updateBusy.load());
 
         char engagement[256];
         snprintf(engagement, sizeof(engagement),
@@ -102,6 +106,7 @@ namespace {
         window->set_frame_skip(config.frame_skip_enabled);
         window->set_sound_notifications(config.sound_notifications);
         window->set_minimize_to_tray(config.minimize_to_tray);
+        window->set_auto_update(config.auto_update);
         window->set_dodge_padding_x(static_cast<float>(config.dodge_padding_x));
         window->set_dodge_padding_y(static_cast<float>(config.dodge_padding_y));
         window->set_react_chance(config.react_chance);
@@ -240,6 +245,11 @@ int Gui::run(UiState& state) {
         snprintf(label, sizeof(label), "%.0f%%", value * 100.0f);
         window->set_prediction_aggression_label(slint::SharedString(label));
     });
+    window->on_auto_update_changed([](bool value) { Config::instance().auto_update = value; });
+    window->on_check_updates([&state] { state.checkUpdates = true; });
+    window->on_apply_update([&state] {
+        if (state.updateReady.load()) state.applyUpdateRequested = true;
+    });
     window->on_ui_scale_changed([window](float value) {
         Config::instance().ui_scale = value;
         char label[16];
@@ -295,6 +305,11 @@ int Gui::run(UiState& state) {
             if (state.shutdown.load()) break;
             slint::invoke_from_event_loop([window, &state] { RefreshWindow(window, state); });
         }
+        // Cierre solicitado (hotkey, bandeja o actualizacion): termina el bucle de UI.
+        slint::invoke_from_event_loop([window] {
+            window->hide();
+            slint::quit_event_loop();
+        });
     });
 
     window->window().on_close_requested([&state] {

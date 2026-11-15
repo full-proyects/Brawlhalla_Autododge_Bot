@@ -5,6 +5,7 @@
             "active_polling_rate_ms": 8,
             "adaptive_polling": true,
             "auto_recover_hook": true,
+            "auto_update": true,
             "calibration_mode": false,
             "character": "any",
             "combo_recognition_enabled": true,
@@ -15,7 +16,7 @@
             "dry_run_enabled": false,
             "export_import_path": "config/exports/shared_profile.json",
             "frame_skip_enabled": false,
-            "github_repo": "",
+            "github_repo": "full-proyects/Brawlhalla_Autododge_Bot",
             "hotkeys": {
                 "calibration": "F4",
                 "dodge": "Z",
@@ -52,18 +53,19 @@
             "window_w": 1120,
             "window_x": 100,
             "window_y": 100,
-            "yumiko_mode_enabled": false,
-            "yumiko_use_signatures": false,
-            "yumiko_kill_damage": 130,
             "xpe_playstyle": "balanced",
             "xpe_team_mode": "auto",
-            "xpe_team_offset": 0
+            "xpe_team_offset": 0,
+            "yumiko_kill_damage": 130,
+            "yumiko_mode_enabled": false,
+            "yumiko_use_signatures": false
         }
     },
     "settings": {
         "active_polling_rate_ms": 8,
         "adaptive_polling": true,
         "auto_recover_hook": true,
+        "auto_update": true,
         "calibration_mode": false,
         "character": "any",
         "combo_recognition_enabled": true,
@@ -74,7 +76,7 @@
         "dry_run_enabled": false,
         "export_import_path": "config/exports/shared_profile.json",
         "frame_skip_enabled": false,
-        "github_repo": "",
+        "github_repo": "full-proyects/Brawlhalla_Autododge_Bot",
         "hotkeys": {
             "calibration": "F4",
             "dodge": "Z",
@@ -111,8 +113,8 @@
         "window_w": 1120,
         "window_x": 100,
         "window_y": 100,
+        "yumiko_kill_damage": 130,
         "yumiko_mode_enabled": false,
-        "yumiko_use_signatures": false,
-        "yumiko_kill_damage": 130
+        "yumiko_use_signatures": false
     }
 }

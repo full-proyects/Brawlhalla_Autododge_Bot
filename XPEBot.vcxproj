@@ -121,7 +121,7 @@
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SlintDir)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>slint_cpp.dll.lib;user32.lib;version.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>slint_cpp.dll.lib;user32.lib;version.lib;winhttp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>"$(SlintDir)\bin\slint-compiler.exe" -f cpp "$(ProjectDir)ui\AppWindow.slint" -o "$(ProjectDir)src\generated\app-window.h"</Command>
@@ -146,7 +146,7 @@
       <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
       <GenerateDebugInformation>false</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SlintDir)\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>slint_cpp.dll.lib;user32.lib;version.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>slint_cpp.dll.lib;user32.lib;version.lib;winhttp.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PreBuildEvent>
       <Command>"$(SlintDir)\bin\slint-compiler.exe" -f cpp "$(ProjectDir)ui\AppWindow.slint" -o "$(ProjectDir)src\generated\app-window.h"</Command>

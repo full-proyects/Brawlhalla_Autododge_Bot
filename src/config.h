@@ -53,6 +53,7 @@ struct SavedProfile {
     bool auto_recover_hook = true;
     bool safe_mode_enabled = true;
     bool warn_on_game_update = true;
+    bool auto_update = true;
     bool process_watchdog_enabled = true;
     bool visual_hitboxes_enabled = false;
     bool combo_recognition_enabled = true;
@@ -242,6 +243,7 @@ public:
         current_profile_.auto_recover_hook = auto_recover_hook;
         current_profile_.safe_mode_enabled = safe_mode_enabled;
         current_profile_.warn_on_game_update = warn_on_game_update;
+        current_profile_.auto_update = auto_update;
         current_profile_.process_watchdog_enabled = process_watchdog_enabled;
         current_profile_.visual_hitboxes_enabled = visual_hitboxes_enabled;
         current_profile_.combo_recognition_enabled = combo_recognition_enabled;
@@ -410,6 +412,7 @@ public:
         auto_recover_hook = true;
         safe_mode_enabled = true;
         warn_on_game_update = true;
+        auto_update = true;
         process_watchdog_enabled = true;
         visual_hitboxes_enabled = false;
         combo_recognition_enabled = true;
@@ -471,6 +474,7 @@ public:
         auto_recover_hook = profile.auto_recover_hook;
         safe_mode_enabled = profile.safe_mode_enabled;
         warn_on_game_update = profile.warn_on_game_update;
+        auto_update = profile.auto_update;
         process_watchdog_enabled = profile.process_watchdog_enabled;
         visual_hitboxes_enabled = profile.visual_hitboxes_enabled;
         combo_recognition_enabled = profile.combo_recognition_enabled;
@@ -610,6 +614,9 @@ public:
         if (root.contains("warn_on_game_update") && root["warn_on_game_update"].is_boolean()) {
             profile.warn_on_game_update = root["warn_on_game_update"].get<bool>();
         }
+        if (root.contains("auto_update") && root["auto_update"].is_boolean()) {
+            profile.auto_update = root["auto_update"].get<bool>();
+        }
         if (root.contains("process_watchdog_enabled") && root["process_watchdog_enabled"].is_boolean()) {
             profile.process_watchdog_enabled = root["process_watchdog_enabled"].get<bool>();
         }
@@ -743,6 +750,7 @@ public:
         root["auto_recover_hook"] = profile.auto_recover_hook;
         root["safe_mode_enabled"] = profile.safe_mode_enabled;
         root["warn_on_game_update"] = profile.warn_on_game_update;
+        root["auto_update"] = profile.auto_update;
         root["process_watchdog_enabled"] = profile.process_watchdog_enabled;
         root["visual_hitboxes_enabled"] = profile.visual_hitboxes_enabled;
         root["combo_recognition_enabled"] = profile.combo_recognition_enabled;
@@ -810,6 +818,7 @@ public:
     bool auto_recover_hook = true;
     bool safe_mode_enabled = true;
     bool warn_on_game_update = true;
+    bool auto_update = true;
     bool process_watchdog_enabled = true;
     bool visual_hitboxes_enabled = false;
     bool combo_recognition_enabled = true;

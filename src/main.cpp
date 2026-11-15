@@ -1,6 +1,7 @@
 #include "AutododgeBot.h"
 #include "gui.h"
 #include "logger.h"
+#include "Updater.h"
 #include "config.h"
 
 #include <thread>
@@ -32,12 +33,16 @@ int main() {
         if (bot.init()) bot.run();
     });
 
+    // Auto-actualizacion: consulta GitHub Releases y aplica si hay version nueva.
+    std::thread updateThread([&ui] { Updater::Run(ui); });
+
     Gui gui;
     const int result = gui.run(ui);
 
     ui.shutdown = true;
     ui.actions.request(AppAction::Shutdown);
     if (botThread.joinable()) botThread.join();
+    if (updateThread.joinable()) updateThread.join();
     bot.RestoreHook();
     SetConsoleCtrlHandler(ConsoleHandler, FALSE);
     g_botInstance = nullptr;

@@ -11,6 +11,11 @@ export component SettingsPage inherits VerticalBox {
     in-out property <bool> minimize-to-tray: true;
     in-out property <float> ui-scale: 1.0;
     in property <string> ui-scale-label: "100%";
+    in property <string> update-status: "Updates: idle";
+    in property <string> update-version: "";
+    in property <bool> update-available: false;
+    in property <bool> update-busy: false;
+    in-out property <bool> auto-update: true;
 
     callback auto-recover-changed(bool);
     callback safe-mode-changed(bool);
@@ -20,6 +25,9 @@ export component SettingsPage inherits VerticalBox {
     callback sound-notifications-changed(bool);
     callback minimize-to-tray-changed(bool);
     callback ui-scale-changed(float);
+    callback auto-update-changed(bool);
+    callback check-updates();
+    callback apply-update();
     callback save-config();
     callback reset-settings();
     callback open-logs();
@@ -42,6 +50,24 @@ export component SettingsPage inherits VerticalBox {
     if root.matches("ui scale"): VerticalBox {
         Text { text: "UI scale: " + root.ui-scale-label; }
         Slider { minimum: 75; maximum: 150; value: root.ui-scale * 100; changed(value) => { root.ui-scale = value / 100; root.ui-scale-changed(value / 100); } }
+    }
+
+    if root.matches("update"): VerticalBox {
+        Text { text: "UPDATES (GitHub Releases)"; color: #3fd47a; font-weight: 700; }
+        Text { text: root.update-status; color: #e6e8eb; wrap: word-wrap; }
+        CheckBox {
+            text: "Instalar actualizaciones automaticamente al iniciar";
+            checked: root.auto-update;
+            toggled => { root.auto-update = self.checked; root.auto-update-changed(self.checked); }
+        }
+        HorizontalBox {
+            Button { text: root.update-busy ? "Buscando..." : "Buscar actualizaciones"; clicked => { root.check-updates(); } }
+            Button {
+                text: root.update-available ? "Instalar v" + root.update-version : "Instalar";
+                enabled: root.update-available && !root.update-busy;
+                clicked => { root.apply-update(); }
+            }
+        }
     }
 
     HorizontalBox {

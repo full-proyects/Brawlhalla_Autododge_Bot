@@ -30,6 +30,12 @@ struct UiState {
     std::atomic<int> validEntityCount{0};
     std::atomic<int> attackCount{0};
     std::atomic<bool> testInput{false};
+    // Auto-actualizacion remota (GitHub Releases).
+    std::atomic<bool> checkUpdates{false};
+    std::atomic<bool> applyUpdateRequested{false};
+    std::atomic<bool> updateAvailable{false};
+    std::atomic<bool> updateReady{false};
+    std::atomic<bool> updateBusy{false};
     std::atomic<bool> manualReconnect{false};
     std::atomic<bool> exportDiagnostics{false};
     std::atomic<bool> openLogsFolder{false};
@@ -65,6 +71,8 @@ struct UiState {
     std::string decisionBanner = "";
     std::string debugText = "";
     std::string hotkeyConflict = "";
+    std::string updateStatus = "Updates: idle";
+    std::string updateVersion = "";
     std::string safeModeReason = "";
 
     std::map<std::string, int> dodgeMoveCounts;
