@@ -163,6 +163,7 @@
     <ClCompile Include="src\AutododgeBot.cpp" />
     <ClCompile Include="src\GameVersionDetector.cpp" />
     <ClCompile Include="src\HotkeyManager.cpp" />
+    <ClCompile Include="src\Updater.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\memory.h" />
@@ -170,6 +171,7 @@
     <ClInclude Include="src\config.h" />
     <ClInclude Include="src\config_manager.h" />
     <ClInclude Include="src\logger.h" />
+    <ClInclude Include="src\Updater.h" />
     <ClInclude Include="src\attack_table.h" />
     <ClInclude Include="src\frame_hitbox_table.h" />
     <ClInclude Include="src\hitbox_table.h" />

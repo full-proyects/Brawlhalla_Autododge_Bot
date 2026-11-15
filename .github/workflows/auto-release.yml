@@ -63,22 +63,7 @@ jobs:
       - name: Actualizar src/app.rc
         env:
           VERSION: ${{ steps.version.outputs.clean }}
-        run: |
-          python3 - <<'EOF'
-          import os, re, pathlib
-          version = os.environ["VERSION"]
-          parts = version.split(".")
-          while len(parts) < 3:
-              parts.append("0")
-          numeric = ",".join(parts + ["0"])
-          text = pathlib.Path("src/app.rc").read_text(encoding="utf-8")
-          text = re.sub(r"(#define VER_FILEVERSION\s+).*", r"\g<1>" + numeric, text)
-          text = re.sub(r"(#define VER_FILEVERSION_STR\s+).*", r'\g<1>"' + version + '.0\\\\0"', text)
-          text = re.sub(r"(#define VER_PRODUCTVERSION\s+).*", r"\g<1>" + numeric, text)
-          text = re.sub(r"(#define VER_PRODUCTVERSION_STR\s+).*", r'\g<1>"' + version + '.0\\\\0"', text)
-          pathlib.Path("src/app.rc").write_text(text, encoding="utf-8")
-          print(text[:400])
-          EOF
+        run: python3 scripts/bump_version.py --version "$VERSION" --path src/app.rc
 
       - name: Commit y tag
         id: commit
