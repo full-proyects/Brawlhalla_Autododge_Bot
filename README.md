@@ -99,6 +99,22 @@ Para publicar una version nueva no hace falta tocar archivos: ejecuta el workflo
 
 Los clientes instalados detectan esa version en el siguiente arranque.
 
+## Si el programa no abre
+
+El ejecutable es de subsistema GUI: si algo falla antes de crear la ventana, Windows
+no muestra nada. Desde esta version cualquier fallo de arranque deja rastro y avisa:
+
+- Log de arranque: `%LOCALAPPDATA%\XPEBot\logs\startup.log` (siempre escribible).
+- Cuadro de error con el motivo y la ruta del log, en lugar de cerrarse en silencio.
+- Si el backend grafico falla (equipos sin aceleracion grafica util, escritorio remoto
+  o maquinas virtuales), el programa se relanza solo con el renderer por software.
+  Tambien se puede forzar a mano: `XPEBot.exe --software-renderer`.
+- Si faltan `slint_cpp.dll`, `msvcp140.dll`, `vcruntime140.dll` o `vcruntime140_1.dll`
+  junto al `.exe` (por ejemplo al ejecutarlo desde dentro del ZIP), avisa con un
+  mensaje pidiendo descomprimir el paquete completo.
+- El directorio de trabajo se fija a la carpeta del ejecutable, asi funciona igual
+  lanzado desde acceso directo o con "Ejecutar como administrador".
+
 ## Panel de control (repo aparte)
 
 El panel web local **xpe-bot-panel** vive en su propio repositorio: sirve una SPA en `127.0.0.1` para ver estado, editar el `config.json` en caliente y ver logs del bot. Sin dependencias externas, solo Python stdlib.
