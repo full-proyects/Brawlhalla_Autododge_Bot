@@ -47,6 +47,35 @@ if ($importText.Contains('libstdc++-6.dll')) {
         Copy-Item -LiteralPath (Join-Path $mingwBin $runtimeDll) -Destination $OutputDirectory
     }
 }
+# MSVC-built binaries link against the Visual C++ runtime; ship it app-local so the
+# package also runs on a machine without the VC++ Redistributable installed.
+if ($importText.Contains('MSVCP140.dll') -or $importText.Contains('VCRUNTIME140.dll')) {
+    $msvcDlls = @('msvcp140.dll', 'vcruntime140.dll', 'vcruntime140_1.dll')
+    $msvcSources = @()
+    if (-not [string]::IsNullOrWhiteSpace($env:VCToolsRedistDir)) {
+        $msvcSources += (Join-Path $env:VCToolsRedistDir 'x64\Microsoft.VC143.CRT')
+    }
+    foreach ($vsRoot in @("$env:ProgramFiles\Microsoft Visual Studio", "${env:ProgramFiles(x86)}\Microsoft Visual Studio")) {
+        if (-not (Test-Path -LiteralPath $vsRoot)) { continue }
+        $msvcSources += @(Get-ChildItem -Path (Join-Path $vsRoot '*\*\VC\Redist\MSVC\*\x64\Microsoft.VC14*.CRT') -Directory -ErrorAction SilentlyContinue |
+            Sort-Object -Property FullName -Descending | Select-Object -ExpandProperty FullName)
+    }
+    $msvcSources += (Join-Path $env:SystemRoot 'System32')
+    foreach ($runtimeDll in $msvcDlls) {
+        $sourceDll = $null
+        foreach ($sourceDir in $msvcSources) {
+            $candidate = Join-Path $sourceDir $runtimeDll
+            if (Test-Path -LiteralPath $candidate) { $sourceDll = $candidate; break }
+        }
+        if ($sourceDll) {
+            Copy-Item -LiteralPath $sourceDll -Destination $OutputDirectory
+        } else {
+            Write-Warning "Visual C++ runtime DLL not found: $runtimeDll (the package may require the VC++ Redistributable)."
+        }
+    }
+    Write-Output 'Visual C++ runtime bundled (app-local deployment).'
+}
+
 Copy-Item -LiteralPath $slintDll -Destination $OutputDirectory
 Copy-Item -LiteralPath (Join-Path $projectRoot 'LICENSE.txt') -Destination $OutputDirectory
 Copy-Item -LiteralPath (Join-Path $projectRoot 'README.md') -Destination (Join-Path $OutputDirectory 'README.md')
